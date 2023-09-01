@@ -1,0 +1,9 @@
+[01-Sep-2023 15:53:06 Europe/Berlin] Uncaught exception: 'ErrorException' with message 'Creation of dynamic property App\Models\User::$name is deprecated'
+Stack trace: #0 C:\xampp\htdocs\MVC\App\Models\User.php(25): Core\Error::errorHandler(8192, 'Creation of dyn...', 'C:\\xampp\\htdocs...', 25)
+#1 C:\xampp\htdocs\MVC\App\Controllers\Signup.php(33): App\Models\User->__construct(Array)
+#2 [internal function]: App\Controllers\Signup->createAction()
+#3 C:\xampp\htdocs\MVC\Core\Controller.php(48): call_user_func_array(Array, Array)
+#4 C:\xampp\htdocs\MVC\Core\Router.php(121): Core\Controller->__call('create', Array)
+#5 C:\xampp\htdocs\MVC\public\index.php(22): Core\Router->dispatch('signup/create')
+#6 {main}
+Thrown in 'C:\xampp\htdocs\MVC\App\Models\User.php' on line 25
