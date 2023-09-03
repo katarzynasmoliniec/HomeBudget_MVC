@@ -2,6 +2,7 @@
 
 namespace Core;
 
+#[\AllowDynamicProperties]
 class View
 {
 

@@ -5,11 +5,6 @@ namespace App\Controllers;
 use \Core\View;
 use \App\Models\User;
 
-/**
- * Signup controller
- *
- * PHP version 7.0
- */
 class Signup extends \Core\Controller
 {
 
@@ -32,8 +27,27 @@ class Signup extends \Core\Controller
     {
         $user = new User($_POST);
 
-        $user->save();
+        if ($user->save()) {
 
+            header('Location: http://' . $_SERVER['HTTP_HOST'] . '/signup/success', true, 303);
+            exit;
+
+        } else {
+
+            View::renderTemplate('Signup/new.html', [
+                'user' => $user
+            ]);
+
+        }
+    }
+
+    /**
+     * Show the signup success page
+     *
+     * @return void
+     */
+    public function successAction()
+    {
         View::renderTemplate('Signup/success.html');
     }
 }
