@@ -7,22 +7,11 @@ use \App\Models\User;
 
 class Signup extends \Core\Controller
 {
-
-    /**
-     * Show the signup page
-     *
-     * @return void
-     */
     public function newAction()
     {
         View::renderTemplate('Signup/new.html');
     }
 
-    /**
-     * Sign up a new user
-     *
-     * @return void
-     */
     public function createAction()
     {
         $user = new User($_POST);
@@ -34,18 +23,13 @@ class Signup extends \Core\Controller
 
         } else {
 
-            View::renderTemplate('Signup/new.html', [
+            var_dump($user->errors);
+            View::renderTemplate('Signup\new.html', [
                 'user' => $user
             ]);
-
         }
     }
 
-    /**
-     * Show the signup success page
-     *
-     * @return void
-     */
     public function successAction()
     {
         View::renderTemplate('Signup/success.html');
