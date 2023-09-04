@@ -2,13 +2,13 @@
 
 namespace App\Controllers;
 
-use App\Auth;
 use \Core\View;
+use \App\Auth;
 
-class Home extends \Core\Controller
+class Items extends Authenticated
 {
     public function indexAction()
     {
-        View::renderTemplate('Home/index.html');
+        View::renderTemplate('Items/index.html');
     }
 }

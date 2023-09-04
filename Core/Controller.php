@@ -2,9 +2,11 @@
 
 namespace Core;
 
-#[\AllowDynamicProperties]
- abstract class Controller
+use \App\Auth;
 
+#[\AllowDynamicProperties]
+
+ abstract class Controller
 {
     protected $route_params = [];
 
@@ -67,5 +69,15 @@ namespace Core;
     {
         header('Location: http://' . $_SERVER['HTTP_HOST'] . $url, true, 303);
         exit;
+    }
+
+    public function requireLogin()
+    {
+        if (! Auth::getUser()) {
+
+            Auth::rememberRequestedPage();
+
+            $this->redirect('/login');
+        }
     }
 }

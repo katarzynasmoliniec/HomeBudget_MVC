@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use \Core\View;
 use \App\Models\User;
+use \App\Auth;
 
 class Login extends \Core\Controller
 {
@@ -18,10 +19,9 @@ class Login extends \Core\Controller
 
         if ($user) {
 
-            session_regenerate_id(true);
-            
-            $_SESSION['user_id'] = $user->id;
-            $this->redirect('/');
+            Auth::login($user);
+
+            $this->redirect(Auth::getReturnToPage());
 
         } else {
 
@@ -33,17 +33,8 @@ class Login extends \Core\Controller
 
     public function destroyAction()
     {
-        $_SESSION = array();
+        Auth::logout();
 
-        if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params["path"], $params["domain"],
-                $params["secure"], $params["httponly"]
-            );
-        }
-
-        session_destroy();
         $this->redirect('/');
     }
 }
