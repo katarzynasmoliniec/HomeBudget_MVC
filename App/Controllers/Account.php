@@ -7,6 +7,11 @@ use \App\Models\User;
 class Account extends \Core\Controller
 {
 
+    /**
+     * Validate if email is available (AJAX) for a new signup.
+     *
+     * @return void
+     */
     public function validateEmailAction()
     {
         $is_valid = ! User::emailExists($_GET['email']);

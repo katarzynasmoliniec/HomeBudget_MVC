@@ -2,28 +2,12 @@
 
 namespace Core;
 
-/**
- * Base controller
- *
- * PHP version 7.0
- */
 #[\AllowDynamicProperties]
  abstract class Controller
-{
 
-    /**
-     * Parameters from the matched route
-     * @var array
-     */
+{
     protected $route_params = [];
 
-    /**
-     * Class constructor
-     *
-     * @param array $route_params  Parameters from the route
-     *
-     * @return void
-     */
     public function __construct($route_params)
     {
         $this->route_params = $route_params;
@@ -70,5 +54,18 @@ namespace Core;
      */
     protected function after()
     {
+    }
+    
+    /**
+     * Redirect to a different page
+     *
+     * @param string $url  The relative URL
+     *
+     * @return void
+     */
+    public function redirect($url)
+    {
+        header('Location: http://' . $_SERVER['HTTP_HOST'] . $url, true, 303);
+        exit;
     }
 }
