@@ -3,6 +3,7 @@
 namespace Core;
 
 use \App\Auth;
+use App\Flash;
 
 #[\AllowDynamicProperties]
 
@@ -75,6 +76,7 @@ use \App\Auth;
     {
         if (! Auth::getUser()) {
 
+            Flash:: addMessage('Please login to access that page', Flash::INFO);
             Auth::rememberRequestedPage();
 
             $this->redirect('/login');
