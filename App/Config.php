@@ -10,4 +10,5 @@ class Config
     const DB_PASSWORD = '';
 
     const SHOW_ERRORS = true;
+    const SECRET_KEY = 'your-secret-key';
 }
