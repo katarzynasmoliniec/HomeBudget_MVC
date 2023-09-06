@@ -2,13 +2,19 @@
     "require": {
         "twig/twig": "^3.7.1",
         "twig/html-extra": "^3.7",
-        "twig/extra-bundle": "^3.7"
+        "twig/extra-bundle": "^3.7",
+        "phpmailer/phpmailer": "^6.8"
     },
 
     "autoload": {
         "psr-4": {
              "Core\\": "Core/",
              "App\\": "App/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
         }
     }
 }
