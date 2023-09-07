@@ -18,16 +18,16 @@ class Mail
             $mail->SMTPDebug = SMTP::DEBUG_SERVER;
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = $to;
+            $mail->Username = 'katarzyna.smoliniec.programista@gmail.com';
             $mail->Password = 'fffgwzsepcnjtykn';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $mail->Port = 465;
 
-            $mail->setFrom('from@example.com');
-            $mail->addAddress('katarzyna.smoliniec.programista@gmail.com');
-            $mail->addReplyTo('from@example.com');
+            $mail->setFrom('katarzyna.smoliniec.programista@gmail.com');
+            $mail->addAddress($to);
             $mail->Subject = $subject;
             $mail->Body = $html;
+            $mail->AltBody = $text;
 
             $mail->send();
             echo 'Message has been sent';    
