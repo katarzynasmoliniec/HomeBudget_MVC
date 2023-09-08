@@ -15,15 +15,14 @@ class Mail
         try {
 
             $mail->isSMTP();
-            $mail->SMTPDebug = SMTP::DEBUG_SERVER;
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'katarzyna.smoliniec.programista@gmail.com';
-            $mail->Password = 'fffgwzsepcnjtykn';
+            $mail->Username = Config::PHPMAILER_USERNAME;
+            $mail->Password = Config::PHPMAILER_PASSWORD;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $mail->Port = 465;
 
-            $mail->setFrom('katarzyna.smoliniec.programista@gmail.com');
+            $mail->setFrom(Config::PHPMAILER_SETFROM);
             $mail->addAddress($to);
             $mail->Subject = $subject;
             $mail->Body = $html;

@@ -18,9 +18,9 @@ class User extends \Core\Model
 
     public function __construct($data = [])
     {
-    foreach ($data as $key => $value) {
-        $this->$key = $value;
-    };
+        foreach ($data as $key => $value) {
+            $this->$key = $value;
+        };
     }
 
     public function save()
@@ -31,8 +31,12 @@ class User extends \Core\Model
 
             $password_hash = password_hash($this->password, PASSWORD_DEFAULT);
 
-            $sql = 'INSERT INTO users (name, email, password_hash)
-                    VALUES (:name, :email, :password_hash)';
+            $token = new Token();
+            $hashed_token = $token->getHash();
+            $this->activation_token = $token->getValue();            
+
+            $sql = 'INSERT INTO users (name, email, password_hash, activation_hash)
+                    VALUES (:name, :email, :password_hash, :activation_hash)';
 
             $db = static::getDB();
             $stmt = $db->prepare($sql);
@@ -40,6 +44,7 @@ class User extends \Core\Model
             $stmt->bindValue(':name', $this->name, PDO::PARAM_STR);
             $stmt->bindValue(':email', $this->email, PDO::PARAM_STR);
             $stmt->bindValue(':password_hash', $password_hash, PDO::PARAM_STR);
+            $stmt->bindValue(':activation_hash', $hashed_token, PDO::PARAM_STR);
 
             return $stmt->execute();
         }
@@ -64,7 +69,7 @@ class User extends \Core\Model
             $this->errors[] = 'Invalid email';
         }
         if (static::emailExists($this->email, $this->id ?? null)) {
-            $this->errors[] = 'email already taken';
+            $this->errors[] = 'Email already taken';
         }
 
         // Password
@@ -81,13 +86,6 @@ class User extends \Core\Model
         }
     }
 
-    /**
-     * See if a user record already exists with the specified email
-     *
-     * @param string $email email address to search for
-     *
-     * @return boolean  True if a record already exists with the specified email, false otherwise
-     */
     public static function emailExists($email, $ignore_id = null)
     {
         $user = static::findByEmail($email);
@@ -101,13 +99,6 @@ class User extends \Core\Model
         return false;
     }
 
-    /**
-     * Find a user model by email address
-     *
-     * @param string $email email address to search for
-     *
-     * @return mixed User object if found, false otherwise
-     */
     public static function findByEmail($email)
     {
         $sql = 'SELECT * FROM users WHERE email = :email';
@@ -123,28 +114,19 @@ class User extends \Core\Model
         return $stmt->fetch();
     }
 
-    /**
-     * Authenticate a user by email and password.
-     *
-     * @param string $email email address
-     * @param string $password password
-     *
-     * @return mixed  The user object or false if authentication fails
-     */
     public static function authenticate($email, $password)
     {
         $user = static::findByEmail($email);
 
-        if ($user) {
+        if ($user && $user->is_active) {
             if (password_verify($password, $user->password_hash)) {
                 return $user;
             }
         }
-
         return false;
     }
 
-    public static function findById($id)
+    public static function findByID($id)
     {
         $sql = 'SELECT * FROM users WHERE id = :id';
 
@@ -159,18 +141,12 @@ class User extends \Core\Model
         return $stmt->fetch();
     }
 
-    /**
-     * Remember the login by inserting a new unique token into the remembered_logins table
-     * for this user record
-     *
-     * @return boolean  True if the login was remembered successfully, false otherwise
-     */
     public function rememberLogin()
     {
         $token = new Token();
         $hashed_token = $token->getHash();
         $this->remember_token = $token->getValue();
-        
+
         $this->expiry_timestamp = time() + 60 * 60 * 24 * 30;  // 30 days from now
 
         $sql = 'INSERT INTO remembered_logins (token_hash, user_id, expires_at)
@@ -195,7 +171,6 @@ class User extends \Core\Model
             if ($user->startPasswordReset()) {
 
                 $user->sendPasswordResetEmail();
-
             }
         }
     }
@@ -253,7 +228,7 @@ class User extends \Core\Model
         $user = $stmt->fetch();
 
         if ($user) {
-            
+
             if (strtotime($user->password_reset_expires_at) > time()) {
 
                 return $user;
@@ -287,5 +262,33 @@ class User extends \Core\Model
         }
 
         return false;
+    }
+
+    public function sendActivationEmail()
+    {
+        $url = 'http://' . $_SERVER['HTTP_HOST'] . '/signup/activate/' . $this->activation_token;
+
+        $text = View::getTemplate('Signup/activation_email.txt', ['url' => $url]);
+        $html = View::getTemplate('Signup/activation_email.html', ['url' => $url]);
+
+        Mail::send($this->email, 'Account activation', $text, $html);
+    }
+
+    public static function activate($value)
+    {
+        $token = new Token($value);
+        $hashed_token = $token->getHash();
+
+        $sql = 'UPDATE users
+                SET is_active = 1,
+                    activation_hash = null
+                WHERE activation_hash = :hashed_token';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':hashed_token', $hashed_token, PDO::PARAM_STR);
+
+        $stmt->execute();                
     }
 }

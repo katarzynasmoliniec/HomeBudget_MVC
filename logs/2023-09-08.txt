@@ -1,0 +1,26 @@
+[08-Sep-2023 19:06:07 Europe/Berlin] Uncaught exception: 'Exception' with message 'No route matched.'
+Stack trace: #0 C:\xampp\htdocs\MVC\public\index.php(24): Core\Router->dispatch('public/js/app.j...')
+#1 {main}
+Thrown in 'C:\xampp\htdocs\MVC\Core\Router.php' on line 115
+[08-Sep-2023 19:06:36 Europe/Berlin] Uncaught exception: 'Exception' with message 'No route matched.'
+Stack trace: #0 C:\xampp\htdocs\MVC\public\index.php(24): Core\Router->dispatch('public/js/app.j...')
+#1 {main}
+Thrown in 'C:\xampp\htdocs\MVC\Core\Router.php' on line 115
+[08-Sep-2023 19:07:16 Europe/Berlin] Uncaught exception: 'Exception' with message 'No route matched.'
+Stack trace: #0 C:\xampp\htdocs\MVC\public\index.php(24): Core\Router->dispatch('signup/activate...')
+#1 {main}
+Thrown in 'C:\xampp\htdocs\MVC\Core\Router.php' on line 115
+[08-Sep-2023 19:07:40 Europe/Berlin] Uncaught exception: 'Exception' with message 'No route matched.'
+Stack trace: #0 C:\xampp\htdocs\MVC\public\index.php(24): Core\Router->dispatch('public/js/app.j...')
+#1 {main}
+Thrown in 'C:\xampp\htdocs\MVC\Core\Router.php' on line 115
+[08-Sep-2023 19:07:53 Europe/Berlin] Uncaught exception: 'ErrorException' with message 'Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\MVC\vendor\phpmailer\phpmailer\src\SMTP.php:291)'
+Stack trace: #0 [internal function]: Core\Error::errorHandler(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 71)
+#1 C:\xampp\htdocs\MVC\Core\Controller.php(71): header('Location: http:...', true, 303)
+#2 C:\xampp\htdocs\MVC\App\Controllers\Signup.php(23): Core\Controller->redirect('/signup/success')
+#3 [internal function]: App\Controllers\Signup->createAction()
+#4 C:\xampp\htdocs\MVC\Core\Controller.php(36): call_user_func_array(Array, Array)
+#5 C:\xampp\htdocs\MVC\Core\Router.php(106): Core\Controller->__call('create', Array)
+#6 C:\xampp\htdocs\MVC\public\index.php(24): Core\Router->dispatch('signup/create')
+#7 {main}
+Thrown in 'C:\xampp\htdocs\MVC\Core\Controller.php' on line 71
