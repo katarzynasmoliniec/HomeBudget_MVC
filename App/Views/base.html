@@ -17,23 +17,27 @@
             <h1 class="display-5 fw-bold lh-1">Home PiggyBank</h1>
         </div>
 
-        <ul class="sidenav mb-5 border">        
-            <li class="nav-item"><a class="nav-link" href="/">Strona Główna</a></li>
+        <ul class="sidenav border">        
+            <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+            <li class="nav-item"><a class="nav-link" href="/">DODAJ PRZYCHÓD</a></li>
+            <li class="nav-item"><a class="nav-link" href="/">DODAJ WYDATEK</a></li>
+            <li class="nav-item"><a class="nav-link" href="/">PRZEGLĄDAJ BILANS</a></li>
             {% if current_user %}
-            <li class="nav-item right"><a class="active" href="/logout">Wyloguj się!</a></li>                                
-            <li class="nav-item"><a class="nav-link" href="/profile/show">Profile</a></li>
+            <li class="nav-item right"><a class="active" href="/logout">WYLOGUJ SIĘ!</a></li>                                
+            <li class="nav-item right"><a class="nav-link" href="/profile/show">USTAWIENIA</a></li>
             {% endif %}           
         </ul>
+        
     </header>
 
     <video autoplay loop muted plays-inline class="back">
         <source src="/images/vid.mp4" type="video/mp4">
     </video>
-
-    <div>
-        <div class="container">
+    <div class="container mx-5">
+        
+        <div>
             {% for message in flash_messages %}
-            <div class="alert alert-{{ message.type }}">
+            <div class="alert alert-{{ message.type }} mt-2 w-50">
                 {{ message.body }}
             </div>
         {% endfor %}
@@ -60,6 +64,6 @@
         <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Features</a></li>
         <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">About</a></li>
       </ul>
-  </footer>
+</footer>
 
 </html>

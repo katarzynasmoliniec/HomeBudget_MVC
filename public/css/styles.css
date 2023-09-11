@@ -8,16 +8,13 @@ body {
 .container {
     min-height:100%;
     position:relative;
-    background: whitesmoke;
 }
 
 .back{
     position: absolute;
-    right: 0;
-    bottom: 0;
-    padding: 0;
-    margin: 0;
     z-index: -1;
+    width: 100%;
+    height: auto;
 }
 
 footer {
@@ -28,7 +25,7 @@ footer {
     background: whitesmoke;
 }
 
-.title{
+.title {
     background: linear-gradient(150deg, #0d332e, #2499bd, #f7f0ef);
     background-size: 180% 180%;
     animation: gradient-animation 18s ease infinite;
@@ -45,12 +42,13 @@ ul.sidenav {
     position: relative;
     height: 100%;
     overflow: auto;
-    
-    }
+}
+
 ul.sidenav li {
     float: left;
     border-right: 1px solid #bbb;
 }
+
 ul.sidenav li.right {
     float: right;
 }
@@ -72,11 +70,18 @@ ul.sidenav li a.active {
 ul.sidenav li a:hover:not(.active) {
     background-color: #555;
     color: white;
+    box-shadow: 3px 5px 5px;
 }
 
 .logo{
     color:  aliceblue; 
 }
+
+.box1{
+    background: whitesmoke;
+    border-radius: 10% ;
+    color: rgb(37, 50, 61);
+  }
 
 @media screen and (max-width: 680px) {
     ul.sidenav li.right, 

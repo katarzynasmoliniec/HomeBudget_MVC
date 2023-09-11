@@ -4,30 +4,33 @@
 
 {% block body %}
 
-    <h1>Log in</h1>
+    
+<section style="margin-bottom: 95px;">
+    <div class="col-md-10 mx-auto my-4 py-5 col-lg-5 text-body-secondary">
 
-    <form action="/login/create" method="post">
+        <form action="/login/create" method="post" class="p-4 p-md-5 border rounded-3 bg-body-tertiary">
+            <h1>Logowanie!</h1>
 
-        <div class="form-group">
-            <label for="inputEmail">Email address</label>
-            <input type="email" id="inputEmail" name="email" placeholder="Email address" autofocus value="{{ email }}"
-            class="form-control" />
-        </div>
-        <div class="form-group">
-            <label for="inputPassword">Password</label>
-            <input type="password" id="inputPassword" name="password" placeholder="Password"
-            class="form-control" />
-        </div>
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" name="remember_me" {% if remember_me %} checked="checked"{% endif %} /> Remember me
-            </label>
-        </div>
+            <div class="form-group">
+                <label for="inputEmail"></label>
+                <input type="email" id="inputEmail" name="email" placeholder="Podaj adres email" autofocus value="{{ email }}"
+                class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="inputPassword"></label>
+                <input type="password" id="inputPassword" name="password" placeholder="Podaj hasło"
+                class="form-control" />
+            </div>
+            <div class="checkbox py-3">
+                <label>
+                    <input type="checkbox" name="remember_me" {% if remember_me %} checked="checked"{% endif %} /> Zapamiętaj mnie
+                </label>
+            </div>
 
-        <button type="submit" class="btn btn-light">Log in</button>
-        <a href="/password/forgot">Forgot password?</a>
-
-
-    </form>
+            <button type="submit" class="w-100 mb-2 btn btn-outline-dark rounded-3 btn-lg">Zaloguj!</button>
+            <a href="/password/forgot" style="text-decoration: none; color: black;">Zapomniałeś hasła?</a>
+        </form>
+    </div>
+</section>
 
 {% endblock %}
