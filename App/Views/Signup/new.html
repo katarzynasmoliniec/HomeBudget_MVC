@@ -4,10 +4,24 @@
 
 {% block footer %}
     <script src="/js/hideShowPassword.min.js"></script>
-    <script src="/public/js/app.js"></script>
 
     <script>
-        
+        $.validator.addMethod('validPassword',
+            function(value, element, param) {
+                if (value != '') {
+                    if (value.match(/.*[a-z]+.*/i) == null) {
+                        return false;
+                    }
+                    if (value.match(/.*\d+.*/) == null) {
+                        return false;
+                    }
+                }
+
+                return true;
+            },
+            'Hasło musi zawierać co najmniej 1 literę i 1 liczbę'
+        );
+
         $(document).ready(function() {
 
             /**
@@ -25,22 +39,57 @@
                         required: true,
                         minlength: 6,
                         validPassword: true
-                    }
+                    },
                 },
                 messages: {
-                    email: {
-                        remote: 'email already taken'
+                    email: { 
+                        remote: 'Email jest już zajęty!',
+                        required: 'To pole nie może być puste!',
+                        email: 'Wpisz poprawny adres email'
+                    },
+                    name : 'To pole nie może być puste!',
+                    password: {
+                        required: 'To pole nie może być puste!',
+                        minlength: 'Hasło powinno zawierać co najmniej 6 znaków'
                     }
                 }
             });
 
-
             /**
               * Show password toggle button
               */
-            $('#inputPassword').hideShowPassword({
+              $('#inputPassword').hideShowPassword({
                 show: false,
-                innerToggle: 'focus'
+                innerToggle: 'focus',
+                toggle: {
+                    element: '<button type="button" class="w-10 mb-2 btn btn-outline-secondary rounded-3 btn-s">',
+                    verticalAlign: 'top'
+                    },
+                
+                    states: {
+                        shown: {
+                            props: { type: 'Pokaż hasło' },
+                            toggle: {
+                                className: 'hideShowPassword-toggle-hide',
+                                content: 'Ukryj',
+                                attr: {
+                                'aria-pressed': 'true',
+                                title: 'Ukryj hasło',
+                                }
+                            }
+                        },
+                        hidden: {
+                        props: { type: 'password' },
+                        toggle: {
+                            className: 'hideShowPassword-toggle-show',
+                            content: 'Pokaż',
+                            attr: {
+                            'aria-pressed': 'false',
+                            title: 'Pokaż hasło',
+                            }
+                            }
+                        }
+                    }
             });
         });
     </script>
@@ -57,28 +106,28 @@
         {% endfor %}
     </ul>
 {% endif %}
+
 <section style="margin-bottom: 95px;">
     <div class="col-md-10 mx-auto my-4 py-5 col-lg-5 text-body-secondary">
+
         <form method="post" action="/signup/create" id="formSignup" class="p-4 p-md-5 border rounded-3 bg-body-tertiary">
-            <h1>Rejestracja!</h1>
+            
+            <h1 class="background">Rejestracja!</h1>
 
             <div class="form-group">
                 <label for="inputName"></label>
-                <input id="inputName" name="name" placeholder="Podaj imię" autofocus value="{{ user.name }}" required 
-                class="form-control" />
+                <input id="inputName" name="name" placeholder="Podaj imię" autofocus value="{{ user.name }}" required class="form-control" />
             </div>
             <div class="form-group">
                 <label for="inputEmail"></label>
-                <input id="inputEmail" name="email" placeholder="Podaj adres email" value="{{ user.email }}" required type="email"
-                class="form-control" />
+                <input id="inputEmail" name="email" placeholder="Podaj adres email" value="{{ user.email }}" required type="email" class="form-control" />
             </div>
-            <div class="form-group py-3">
+            <div class="form-group pb-2">
                 <label for="inputPassword"></label>
-                <input type="password" id="inputPassword" name="Podaj hasło" placeholder="Password" required
-                class="form-control" />
+                <input type="password" id="inputPassword" name="password" placeholder="Podaj hasło" required type="password" class="form-control" />
             </div>
 
-            <button type="submit" class="w-100 mb-2 btn btn-outline-dark rounded-3 btn-lg">Załóż konto!</button>
+            <button type="submit" class="w-100 mb-2 btn btn-outline-secondary rounded-3 btn-lg">Załóż konto!</button>
 
         </form>
     </div>

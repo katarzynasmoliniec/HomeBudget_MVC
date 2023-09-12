@@ -24,13 +24,13 @@ class Login extends \Core\Controller
 
             Auth::login($user, $remember_me);
 
-            Flash::addMessage('Login successful');
+            Flash::addMessage('Logowanie udane!');
 
             $this->redirect(Auth::getReturnToPage());
 
         } else {
 
-            Flash::addMessage('Login unsuccessful, please try again', Flash::WARNING);
+            Flash::addMessage('Logowanie nie udane, proszę spróbować ponownie!', Flash::WARNING);
 
             View::renderTemplate('Login/new.html', [
                 'email' => $_POST['email'],
@@ -48,7 +48,7 @@ class Login extends \Core\Controller
 
     public function showLogoutMessageAction()
     {
-      Flash::addMessage('Logout successful');
+      Flash::addMessage('Wylogowanie udane!');
 
       $this->redirect('/');
     }

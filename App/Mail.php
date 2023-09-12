@@ -28,8 +28,7 @@ class Mail
             $mail->Body = $html;
             $mail->AltBody = $text;
 
-            $mail->send();
-            echo 'Message has been sent';    
+            $mail->send();   
         } 
         catch (Exception $e) 
         {

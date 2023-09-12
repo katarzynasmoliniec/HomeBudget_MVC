@@ -78,10 +78,25 @@ ul.sidenav li a:hover:not(.active) {
 }
 
 .box1{
-    background: whitesmoke;
-    border-radius: 10% ;
-    color: rgb(37, 50, 61);
-  }
+
+    border-radius: 20% ;
+    color: aliceblue;
+    background-color: #DDE6ED80;
+    padding-bottom: 20px;
+}
+
+.background {
+    margin: 0;
+    padding: 1rem;
+    background: linear-gradient(150deg, #0d332e, #2499bd, #f7f0ef);
+    background-size: 180% 180%;
+    animation: gradient-animation 18s ease infinite;
+    font-size: 50px;
+    color: aliceblue;
+    text-align: center;
+    justify-content: center;
+    border-radius: 10px;
+}
 
 @media screen and (max-width: 680px) {
     ul.sidenav li.right, 
@@ -102,4 +117,9 @@ ul.sidenav li a:hover:not(.active) {
     100% {
         background-position: 0% 50%;
     }
+}
+
+::-ms-reveal,
+::-ms-clear {
+  display: none !important;
 }
