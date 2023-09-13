@@ -1,5 +1,5 @@
 Aktywacja konta!
 
-Dziekuję za rejestracę. Proszę kliknij w link, aby aktywować konto:
+Dziekuję za rejestrację. Proszę kliknij w link, aby aktywować konto:
 
 {{ url }}
