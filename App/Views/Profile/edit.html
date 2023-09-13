@@ -58,38 +58,38 @@
             /**
               * Show password toggle button
               */
-              $('#inputPassword').hideShowPassword({
-                show: false,
-                innerToggle: 'focus',
-                toggle: {
-                    element: '<button type="button" class="w-10 mb-2 btn btn-outline-secondary rounded-3 btn-s">',
-                    verticalAlign: 'top'
-                    },
-                
-                    states: {
-                        shown: {
-                            props: { type: 'Pokaż hasło' },
-                            toggle: {
-                                className: 'hideShowPassword-toggle-hide',
-                                content: 'Ukryj',
-                                attr: {
-                                'aria-pressed': 'true',
-                                title: 'Ukryj hasło',
-                                }
-                            }
-                        },
-                        hidden: {
-                        props: { type: 'password' },
+            $('#inputPassword').hideShowPassword({
+            show: false,
+            innerToggle: 'focus',
+            toggle: {
+                element: '<button type="button" class="w-10 mb-2 btn btn-outline-secondary rounded-3 btn-s">',
+                verticalAlign: 'top'
+                },
+            
+                states: {
+                    shown: {
+                        props: { type: 'Pokaż hasło' },
                         toggle: {
-                            className: 'hideShowPassword-toggle-show',
-                            content: 'Pokaż',
+                            className: 'hideShowPassword-toggle-hide',
+                            content: 'Ukryj',
                             attr: {
-                            'aria-pressed': 'false',
-                            title: 'Pokaż hasło',
-                            }
+                            'aria-pressed': 'true',
+                            title: 'Ukryj hasło',
                             }
                         }
+                    },
+                    hidden: {
+                    props: { type: 'password' },
+                    toggle: {
+                        className: 'hideShowPassword-toggle-show',
+                        content: 'Pokaż',
+                        attr: {
+                        'aria-pressed': 'false',
+                        title: 'Pokaż hasło',
+                        }
+                        }
                     }
+                }
             });
         });
     </script>
@@ -129,9 +129,8 @@
                     <input type="password" id="inputPassword" name="password" placeholder="Zmień hasło" aria-describedby="helpBlock" class="form-control" />
                     <span id="helpBlock" class="help-block">Pozostaw puste, aby zachować aktualne hasło.</span>
                 </div>
-                <button type="button" class="w-50 btn btn-light btn-outline-secondary btn-lg px-4 me-md-2">Zachowaj</button>
-                <button type="button" class="w-50 btn btn-light btn-outline-secondary btn-lg px-4 me-md-2"><a href="/profile/show" style="text-decoration: none; color: rgb(85, 84, 85);">Wróć</a></button>
-
+                <button type="submit" class="w-50 btn btn-light btn-outline-secondary btn-lg px-4 me-md-2">Zachowaj</button>
+                <button type="submit" class="w-50 btn btn-light btn-outline-secondary btn-lg px-4 me-md-2"><a href="/profile/show" style="text-decoration: none; color: rgb(85, 84, 85);">Wróć</a></button>
             </form>
         </div>
     </section>
