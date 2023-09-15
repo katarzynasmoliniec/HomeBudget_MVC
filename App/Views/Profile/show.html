@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}Ustawienia Konta{% endblock %}
 
 {% block body %}
     <section style="margin-bottom: 95px;">
@@ -8,9 +8,9 @@
             <h1 class="background">Dane Twojego konta!</h1>
             <div class="p-4 p-md-5 border rounded-3 bg-body-tertiary">
                 <dl class="row">
-                    <dt class="col-sm-3">Name</dt>
+                    <dt class="col-sm-3">Imię</dt>
                     <dd class="col-sm-9">{{ user.name }}</dd>
-                    <dt class="col-sm-3">email</dt>
+                    <dt class="col-sm-3">Email</dt>
                     <dd class="col-sm-9">{{ user.email }}</dd>
                 </dl>
             </div>

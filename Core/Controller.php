@@ -76,7 +76,7 @@ use \App\Flash;
     {
         if (! Auth::getUser()) {
 
-            Flash:: addMessage('Please login to access that page', Flash::INFO);
+            Flash:: addMessage('Proszę się zalogować, aby odwiedzić stronę', Flash::INFO);
             Auth::rememberRequestedPage();
 
             $this->redirect('/login');

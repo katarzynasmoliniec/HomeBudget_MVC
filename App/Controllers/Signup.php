@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use \Core\View;
 use \App\Models\User;
+use \App\Models\Category;
 
 class Signup extends \Core\Controller
 {
@@ -44,6 +45,7 @@ class Signup extends \Core\Controller
 
     public function activatedAction()
     {
+        Category::getStartCategory();
         View::renderTemplate('Signup/activated.html');
     }
 }

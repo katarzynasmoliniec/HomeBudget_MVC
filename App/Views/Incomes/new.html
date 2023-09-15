@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Przychody{% endblock %}
+
+{% block footer %}
+    <script>
+         $(document).ready(function() {
+
+            var forms = document.querySelectorAll('.needs-validation')
+
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        });
+
+    </script>
+{% endblock %}
+
+{% block body %}
+
+{% if income.errors is not empty %}
+    <p>Errors:</p>
+    <ul>
+        {% for error in income.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+    
+<section style="margin-bottom: 95px;">
+    <div class="col-md-10 mx-auto my-4 py-5 col-lg-5 text-body-secondary">
+
+        <form method="post" action="/incomes/create" id="formIncomes" class="p-4 p-md-5 border rounded-3 bg-body-tertiary needs-validation" novalidate>
+            <h1 class="background mb-0 fs-2 mb-2 pb-2">Dodaj swoj Przychód!</h1>
+
+            <div class="mb-3">
+                
+                <label for="inputAmount" class="form-label"></label>
+                <div class="input-group has-validation">
+                    <span class="input-group-text" id="inputGroupPrepend">$</span>
+                    <input type="number" class="form-control" id="ImputAmount" name="amount"  placeholder="Podaj kwotę" value="{{ income.amount }}" step="0.01" required>
+                    <div class="invalid-feedback" style="color: rgb(71, 71, 71);">
+                    Kwota przychodu jest wymagana!
+                    </div>
+                </div>
+
+            <div class="mb-3">
+                <label for="inputAmount" class="form-label"></label>
+                <div class="input-group has-validation">
+                    <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar2-plus" viewBox="0 0 16 16">
+                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2z"/>
+                    <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V4zM8 8a.5.5 0 0 1 .5.5V10H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V11H6a.5.5 0 0 1 0-1h1.5V8.5A.5.5 0 0 1 8 8z"/>
+                    </svg></span>
+                    <input type="date" class="form-control" id="inputDate" name= "date_of_income" placeholder="Podaj datę" value="{{ income.date_of_income }}"  required>
+                    <div class="invalid-feedback" style="color: rgb(71, 71, 71);">
+                        Proszę podać datę!!
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="inputAmount" class="form-label"></label>
+                <div class="input-group has-validation">
+                    <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-yin-yang" viewBox="0 0 16 16">
+                        <path d="M9.167 4.5a1.167 1.167 0 1 1-2.334 0 1.167 1.167 0 0 1 2.334 0Z"/>
+                        <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM1 8a7 7 0 0 1 7-7 3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 0 0 7 7 7 0 0 1-7-7Zm7 4.667a1.167 1.167 0 1 1 0-2.334 1.167 1.167 0 0 1 0 2.334Z"/>
+                    </svg></span>
+                    <select class="form-select" id="ImputCategory" required>
+                        <option name="category" value="{{ income.category }}">Wybierz kategorię</option>
+                        <option name="category" value="{{ income.category }}">Wypłata</option>
+                        <option name="category" value="{{ income.category }}">Darowizna</option>
+                        <option name="category" value="{{ income.category }}">Allegro</option>
+                        <option name="category" value="{{ income.category }}">Kieszonkowe</option>
+                    </select>
+                    <div class="invalid-feedback" style="color: rgb(71, 71, 71);">
+                        Proszę wybrać kategorię przychodu.
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="w-100 mb-2 btn btn-outline-dark rounded-3 btn-lg">Zachowaj</button>
+            <button type="submit" class="w-100 mb-2 btn btn-outline-dark rounded-3 btn-lg"><a href="/" style="text-decoration: none; color: rgb(85, 84, 85);">Wróć</a></button>
+        </form>
+    </div>
+</section>
+            
+
+{% endblock %}
