@@ -5,15 +5,21 @@ namespace App\Controllers;
 use \Core\View;
 use \App\Auth;
 use \App\Flash;
+use App\Models\Category;
 use \App\Models\Income;
-use \App\Models\User;
 
 class Incomes extends Authenticated
 {
-  
+
     public function newAction()
     {
-        View::renderTemplate('Incomes/new.html');
+        $user_id = $_SESSION['user_id'];
+        $this-> category = Category::getNameCategory($user_id);
+        
+
+        View::renderTemplate('Incomes/new.html', [
+            'category' => $this->category
+        ]);
     }
 
     public function createAction()
@@ -25,7 +31,11 @@ class Incomes extends Authenticated
             Flash::addMessage('Przychód dodany!');
             View::renderTemplate('Incomes/new.html');
 
-        } 
+        } else {
+            View::renderTemplate('Incomes/new.html', [
+                'category' => $this->category
+            ]);
+        }
     }
 
     public function editAction()
@@ -46,7 +56,7 @@ class Incomes extends Authenticated
         } else {
 
             View::renderTemplate('Incomes/new.html', [
-                'income' => $this->incomes
+                'income' => $this->income
             ]);
 
         }

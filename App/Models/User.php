@@ -338,4 +338,9 @@ class User extends \Core\Model
 
         return false;
     }
+
+    public function getIdUser($data)
+    {
+        return $data['id'];
+    }
 }

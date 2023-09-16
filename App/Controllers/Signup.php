@@ -45,7 +45,7 @@ class Signup extends \Core\Controller
 
     public function activatedAction()
     {
-        Category::getStartCategory();
+        Category::setStartCategory();
         View::renderTemplate('Signup/activated.html');
     }
 }

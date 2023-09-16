@@ -49,12 +49,12 @@
                     <span class="input-group-text" id="inputGroupPrepend">$</span>
                     <input type="number" class="form-control" id="ImputAmount" name="amount"  placeholder="Podaj kwotę" value="{{ income.amount }}" step="0.01" required>
                     <div class="invalid-feedback" style="color: rgb(71, 71, 71);">
-                    Kwota przychodu jest wymagana!
+                    Proszę podać kwota przychodu!
                     </div>
                 </div>
 
-            <div class="mb-3">
-                <label for="inputAmount" class="form-label"></label>
+            <div class="mb-2">
+                <label for="inputDate" class="form-label"></label>
                 <div class="input-group has-validation">
                     <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar2-plus" viewBox="0 0 16 16">
                     <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2z"/>
@@ -66,23 +66,22 @@
                     </div>
                 </div>
             </div>
-
             <div class="mb-3">
-                <label for="inputAmount" class="form-label"></label>
+                <label for="inputCategory" class="form-label"></label>
                 <div class="input-group has-validation">
                     <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-yin-yang" viewBox="0 0 16 16">
                         <path d="M9.167 4.5a1.167 1.167 0 1 1-2.334 0 1.167 1.167 0 0 1 2.334 0Z"/>
                         <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM1 8a7 7 0 0 1 7-7 3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 0 0 7 7 7 0 0 1-7-7Zm7 4.667a1.167 1.167 0 1 1 0-2.334 1.167 1.167 0 0 1 0 2.334Z"/>
                     </svg></span>
-                    <select class="form-select" id="ImputCategory" required>
-                        <option name="category" value="{{ income.category }}">Wybierz kategorię</option>
-                        <option name="category" value="{{ income.category }}">Wypłata</option>
-                        <option name="category" value="{{ income.category }}">Darowizna</option>
-                        <option name="category" value="{{ income.category }}">Allegro</option>
-                        <option name="category" value="{{ income.category }}">Kieszonkowe</option>
+                    <select class="form-select" id="inputCategory" type="number" name="income_category_assigned_to_user_id" required>
+                        <option value="" required>Wybierz kategorię</option>
+
+                        {% for income_category_assigned_to_user_id,category in category %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
                     </select>
                     <div class="invalid-feedback" style="color: rgb(71, 71, 71);">
-                        Proszę wybrać kategorię przychodu.
+                        Proszę wybrać kategorię przychodu!
                     </div>
                 </div>
             </div>
