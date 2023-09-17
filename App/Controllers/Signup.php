@@ -5,6 +5,7 @@ namespace App\Controllers;
 use \Core\View;
 use \App\Models\User;
 use \App\Models\Category;
+use App\Models\Payform;
 
 class Signup extends \Core\Controller
 {
@@ -46,6 +47,7 @@ class Signup extends \Core\Controller
     public function activatedAction()
     {
         Category::setStartCategory();
+        Payform::setStartPayform();
         View::renderTemplate('Signup/activated.html');
     }
 }

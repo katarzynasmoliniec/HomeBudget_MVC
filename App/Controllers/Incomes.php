@@ -3,19 +3,22 @@
 namespace App\Controllers;
 
 use \Core\View;
-use \App\Auth;
 use \App\Flash;
 use App\Models\Category;
 use \App\Models\Income;
 
 class Incomes extends Authenticated
 {
-
+    protected function before()
+    {
+        parent::before();
+        $user_id = $_SESSION['user_id'];
+        $this-> cats = Category::getNameCategoryIncome($user_id);
+    }
+    
+    
     public function newAction()
     {
-        $user_id = $_SESSION['user_id'];
-        $this-> cats = Category::getNameCategory($user_id);
-        
 
         View::renderTemplate('Incomes/new.html', [
             'cats' => $this->cats
@@ -29,7 +32,9 @@ class Incomes extends Authenticated
         if ($income->save()) {
 
             Flash::addMessage('Przychód dodany!');
-            View::renderTemplate('Incomes/new.html');
+            View::renderTemplate('Incomes/new.html', [
+                'cats' => $this->cats
+            ]);
 
         } else {
             View::renderTemplate('Incomes/new.html', [

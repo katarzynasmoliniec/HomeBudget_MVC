@@ -16,6 +16,7 @@ class Income extends \Core\Model
     public $income_category_assigned_to_user_id;
     public $user_id;
     public $cats = [];
+    public $comment;
 
         
     public function __construct($data = [])
@@ -33,8 +34,8 @@ class Income extends \Core\Model
 
         if (empty($this->errors)) {
 
-            $sql = 'INSERT INTO incomes (user_id, income_category_assigned_to_user_id, amount, date_of_income)
-                    VALUES (:user_id, :income_category_assigned_to_user_id, :amount, :date_of_income)';
+            $sql = 'INSERT INTO incomes (user_id, income_category_assigned_to_user_id, amount, date_of_income, income_comment )
+                    VALUES (:user_id, :income_category_assigned_to_user_id, :amount, :date_of_income, :income_comment)';
 
             $db = static::getDB();
             $stmt = $db->prepare($sql);
@@ -43,6 +44,7 @@ class Income extends \Core\Model
             $stmt->bindValue(':income_category_assigned_to_user_id', $this->income_category_assigned_to_user_id, PDO::PARAM_INT);
             $stmt->bindValue(':amount', (float) $this->amount, PDO::PARAM_STR);
             $stmt->bindValue(':date_of_income', $this->date_of_income, PDO::PARAM_STR);
+            $stmt->bindValue(':income_comment', $this->comment, PDO::PARAM_STR);
 
             return $stmt->execute();
         }
@@ -61,5 +63,4 @@ class Income extends \Core\Model
         }
 
     }
-
 }

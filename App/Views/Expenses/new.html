@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Przychody{% endblock %}
+{% block title %}Wydatki{% endblock %}
 
 {% block footer %}
     <script>
@@ -26,10 +26,10 @@
 
 {% block body %}
 
-{% if income.errors is not empty %}
+{% if expense.errors is not empty %}
     <p>Errors:</p>
     <ul>
-        {% for error in income.errors %}
+        {% for error in expense.errors %}
             <li>{{ error }}</li>
         {% endfor %}
     </ul>
@@ -39,17 +39,17 @@
 <section style="margin-bottom: 95px;">
     <div class="col-md-10 mx-auto my-4 py-5 col-lg-5 text-body-secondary">
 
-        <form method="post" action="/incomes/create" id="formIncomes" class="p-4 p-md-5 border rounded-3 bg-body-tertiary needs-validation" novalidate>
-            <h1 class="background mb-0 fs-2 mb-2 pb-2">Dodaj swoj Przychód!</h1>
+        <form method="post" action="/expenses/create" id="formExpenses" class="p-4 p-md-5 border rounded-3 bg-body-tertiary needs-validation" novalidate>
+            <h1 class="background mb-0 fs-2 mb-2 pb-2">Dodaj swoj Wydatek!</h1>
 
             <div class="mb-3">
                 
                 <label for="inputAmount" class="form-label"></label>
                 <div class="input-group has-validation">
                     <span class="input-group-text" id="inputGroupPrepend">$</span>
-                    <input type="number" class="form-control" id="ImputAmount" name="amount"  placeholder="Podaj kwotę" value="{{ income.amount }}" step="0.01" min="0.01" required>
+                    <input type="number" class="form-control" id="ImputAmount" name="amount"  placeholder="Podaj kwotę" value="{{ expense.amount }}" step="0.01" min="0.01" required>
                     <div class="invalid-feedback" style="color: rgb(71, 71, 71);">
-                    Proszę podać kwotę przychodu!
+                    Proszę podać kwotę wydatku!
                     </div>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                     <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2z"/>
                     <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V4zM8 8a.5.5 0 0 1 .5.5V10H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V11H6a.5.5 0 0 1 0-1h1.5V8.5A.5.5 0 0 1 8 8z"/>
                     </svg></span>
-                    <input type="date" class="form-control" id="inputDate" name= "date_of_income" placeholder="Podaj datę" value="{{ income.date_of_income }}"  required>
+                    <input type="date" class="form-control" id="inputDate" name= "date" placeholder="Podaj datę" value="{{ expense.date }}"  required>
                     <div class="invalid-feedback" style="color: rgb(71, 71, 71);">
                         Proszę podać datę!!
                     </div>
@@ -74,7 +74,7 @@
                         <path d="M9.167 4.5a1.167 1.167 0 1 1-2.334 0 1.167 1.167 0 0 1 2.334 0Z"/>
                         <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM1 8a7 7 0 0 1 7-7 3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 0 0 7 7 7 0 0 1-7-7Zm7 4.667a1.167 1.167 0 1 1 0-2.334 1.167 1.167 0 0 1 0 2.334Z"/>
                     </svg></span>
-                    <select class="form-select" id="inputCategory" type="number" name="income_category_assigned_to_user_id" required>
+                    <select class="form-select" id="inputCategory" type="number" name="category_id" required>
                         <option value="" required>Wybierz kategorię</option>
 
                         {% for cat in cats %}
@@ -82,7 +82,26 @@
                         {% endfor %}
                     </select>
                     <div class="invalid-feedback" style="color: rgb(71, 71, 71);">
-                        Proszę wybrać kategorię przychodu!
+                        Proszę wybrać kategorię wydatku!
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputPayform" class="form-label"></label>
+                <div class="input-group has-validation">
+                    <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-yin-yang" viewBox="0 0 16 16">
+                        <path d="M9.167 4.5a1.167 1.167 0 1 1-2.334 0 1.167 1.167 0 0 1 2.334 0Z"/>
+                        <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM1 8a7 7 0 0 1 7-7 3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 0 0 7 7 7 0 0 1-7-7Zm7 4.667a1.167 1.167 0 1 1 0-2.334 1.167 1.167 0 0 1 0 2.334Z"/>
+                    </svg></span>
+                    <select class="form-select" id="inputPayform" type="number" name="pay" required>
+                        <option value="" required>Wybierz metodę płatności</option>
+
+                        {% for payform in payforms %}
+                            <option value="{{ payform.id }}">{{ payform.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="invalid-feedback" style="color: rgb(71, 71, 71);">
+                        Proszę wybrać metodę płatności!
                     </div>
                 </div>
             </div>
