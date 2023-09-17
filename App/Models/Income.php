@@ -15,7 +15,7 @@ class Income extends \Core\Model
     public $date_of_income;
     public $income_category_assigned_to_user_id;
     public $user_id;
-    public $category = [];
+    public $cats = [];
 
         
     public function __construct($data = [])

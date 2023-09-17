@@ -14,11 +14,11 @@ class Incomes extends Authenticated
     public function newAction()
     {
         $user_id = $_SESSION['user_id'];
-        $this-> category = Category::getNameCategory($user_id);
+        $this-> cats = Category::getNameCategory($user_id);
         
 
         View::renderTemplate('Incomes/new.html', [
-            'category' => $this->category
+            'cats' => $this->cats
         ]);
     }
 
@@ -33,7 +33,7 @@ class Incomes extends Authenticated
 
         } else {
             View::renderTemplate('Incomes/new.html', [
-                'category' => $this->category
+                'cats' => $this->cats
             ]);
         }
     }

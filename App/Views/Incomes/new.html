@@ -76,8 +76,8 @@
                     <select class="form-select" id="inputCategory" type="number" name="income_category_assigned_to_user_id" required>
                         <option value="" required>Wybierz kategorię</option>
 
-                        {% for income_category_assigned_to_user_id,category in category %}
-                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% for cat in cats %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
                         {% endfor %}
                     </select>
                     <div class="invalid-feedback" style="color: rgb(71, 71, 71);">
