@@ -10,11 +10,17 @@ body {
     position:relative;
 }
 
-.back{
-    position: absolute;
-    z-index: -1;
-    width: 100%;
-    height: auto;
+.fullscreen-video {
+    height: calc(100vh - 60px); 
+    width: 100%; overflow: hidden; 
+    position: relative;
+}
+   
+.fullscreen-video video {
+    object-fit: cover; 
+    position: absolute; 
+    top: 0; 
+    left: 0;
 }
 
 footer {
@@ -33,14 +39,15 @@ footer {
     color: aliceblue;
 }
 
-ul.sidenav {
+.sidenav {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    width: 100%;
+    height: 100%;
     background-color:  #333;
     position: relative;
-    height: 100%;
+    display: flex;
+    align-items: center;
     overflow: auto;
 }
 
@@ -53,7 +60,7 @@ ul.sidenav li.right {
     float: right;
 }
 
-ul.sidenav li a {
+ul.sidenav li a, .nav-link-10 {
     display: block;
     color: #e3f2fd;
     padding: 14px 16px;
@@ -98,13 +105,20 @@ ul.sidenav li a:hover:not(.active) {
     border-radius: 10px;
 }
 
-@media screen and (max-width: 680px) {
+.row {
+    display: flex;
+}
+  
+.column {
+    flex: 50%;
+    padding: 10px;
+}
+
+@media (max-width: 800px) {
     ul.sidenav li.right, 
-    ul.sidenav li {float: none;}
-    .back{
-        height: 100%;
-        width: auto;
-      }
+    ul.sidenav li {
+        float: none;
+    }
 }
 
 @keyframes gradient-animation {
