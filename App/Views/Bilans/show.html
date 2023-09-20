@@ -1,6 +1,71 @@
 {% extends "base.html" %}
 
 {% block title %}Bilans{% endblock %}
+
+{% block footer %}
+
+<script>
+    const xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
+    const yValues = [55, 49, 44, 24, 15];
+    const barColors = [
+    "#b91d47",
+    "#00aba9",
+    "#2b5797",
+    "#e8c3b9",
+    "#1e7145"
+    ];
+
+    new Chart("myChart", {
+    type: "doughnut",
+    data: {
+        labels: xValues,
+        datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+        }]
+    },
+    options: {
+        title: {
+        display: true,
+        text: "Wykres Twoich wydatków!"
+        }
+    }
+    });
+</script>
+<script>
+    var data = [{
+    values: [27, 11, 25, 8, 1, 3, 25],
+    labels: ['US', 'China', 'European Union', 'Russian Federation', 'Brazil', 'India', 'Rest of World' ],
+    textposition: 'inside',
+    domain: {column: 1},
+    name: 'WYDATKI',
+    hoverinfo: 'value+label+name',
+    hole: .5,
+    type: 'pie'
+    }];
+
+    var layout = {
+    annotations: [
+        {
+        font: {
+            size: 20
+        },
+        showarrow: false,
+        text: 'Wydatki',
+        x: 0.5,
+        y: 0.5
+        }
+    ],
+    showlegend: false,
+    height: 400,
+    };
+
+    Plotly.newPlot('myDiv', data, layout);
+
+</script>
+
+{% endblock %}
+
 {% block body %}
 
 <section style="margin-bottom: 95px;">
@@ -31,7 +96,7 @@
                                      {% endfor %}
                                 {% else %}
                                     <tr>
-                                        <td>Brak przychodów!</td>
+                                        <td colspan="7">Brak przychodów!</td>
                                     </tr>
                                 {% endif %}
                             </tbody>
@@ -60,13 +125,12 @@
                                      {% endfor %}
                                 {% else %}
                                     <tr>
-                                        <td>Brak wydatków!</td>
+                                        <td colspan="8">Brak wydatków!</td>
                                     </tr>
                                 {% endif %}
                             </tbody>
                         </table>
                     </div>
-
                 </div>
                 
                 <div class="background col-lg-4 m-0 text-center">
@@ -83,9 +147,13 @@
                     <h4>{{ sumincomes }} zł</h4>
                     {% if sumincomes > 0 %}
                         <h5>Brawo Twój bilans jest dodatni!</h5>
-                        {% else %}
+                        {% elseif sumincomes < 0 %}
                             <h5>Niestety Twój bilans jest ujemny!</h5>
-                    {% endif %}                 
+                        {% else %}
+                            <h5>Twój bilans jest zerowy</h5> 
+                    {% endif %}  
+                    
+                    <div id='myDiv' class=""></div>
                 </div>
 
                 
