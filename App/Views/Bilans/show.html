@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Bilans{% endblock %}
+{% block body %}
+
+<section style="margin-bottom: 95px;">
+    <div class="col-md-10 mx-auto my-4 py-5 col-lg-12 text-body-secondary">
+        <form method="post" action="/bilans/show" id="formBilans" class="p-3 p-md-4 border rounded-3 bg-body-tertiary">
+            <h1 class="background mb-0 fs-2 mb-2 pb-2">Bilans z bieżacego miesiąca!</h1>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="col-lg-12 m-0">
+                        <h3 class="text-center">Przychody</h3>
+                        <table class="table table-success table-striped">
+                            <thead>
+                               <tr>
+                                  <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th colspan="2">Komentarz</th> <th></th>
+                               </tr>
+                            </thead>
+                            <tbody>
+                                {% if incomes %}
+                                
+                                    {% for income in incomes %}
+                                        <tr>    
+                                            <td>{{ loop.index }}</td>
+                                            <td>{{ income.name }}</td>
+                                            <td>{{ income.amount }} zł</td>
+                                            <td>{{ income.date_of_income }}</td>
+                                            <td colspan="2">{{income.income_comment}}</td> <td></td>
+                                        </tr>
+                                     {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td>Brak przychodów!</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                         </table>
+                    </div>
+                    <div class="col-lg-12 m-0">
+                        <h3 class="text-center">Wydatki</h3>
+                        <table class="table table-warning table-striped">
+                            <thead>
+                               <tr>
+                                  <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th>Rodzaj płatności</th><th colspan="2">Komentarz</th> <th></th>
+                               </tr>
+                            </thead>
+                            <tbody>
+                                {% if expenses %}
+                                
+                                    {% for expense in expenses %}
+                                        <tr>    
+                                            <td>{{ loop.index }}</td>
+                                            <td>{{ expense.name }}</td>
+                                            <td>{{ expense.amount }} zł</td>
+                                            <td>{{ expense.date_of_expense }}</td>
+                                            <td>{{ expense.payname }}</td>
+                                            <td colspan="2">{{expense.expense_comment}}</td> <td></td>
+                                        </tr>
+                                     {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td>Brak wydatków!</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                
+                <div class="background col-lg-4 m-0 text-center">
+                    <h3 class="py-2" style="border-bottom: solid;" >Bilans z bieżącego miesiąca</h3>
+                    {% set sumincomes = 0 %}
+                    {% for income in incomes %}
+                        {% set sumincomes = sumincomes + income.amount %}
+                    {% endfor %} 
+                    {% set sumexpenses = 0 %}
+                    {% for income in expenses %}
+                        {% set sumexpenses = sumexpenses + income.amount %}
+                    {% endfor %} 
+                    {% set sumincomes = sumincomes - sumexpenses %}
+                    <h4>{{ sumincomes }} zł</h4>
+                    {% if sumincomes > 0 %}
+                        <h5>Brawo Twój bilans jest dodatni!</h5>
+                        {% else %}
+                            <h5>Niestety Twój bilans jest ujemny!</h5>
+                    {% endif %}                 
+                </div>
+
+                
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+
+

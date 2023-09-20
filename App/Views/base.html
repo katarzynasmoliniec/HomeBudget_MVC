@@ -9,51 +9,6 @@
 </head>
 
 
-<script>
-    window.addEventListener('resize', resize, false);
-    window.addEventListener('load', onLoad, false);
-    function onLoad() {
-      previous_width = 0;
-      var video = document.getElementById('video');
-      var mp4video = document.getElementById('mp4');
-      if (video) {
-        resize();
-        if (window.innerWidth < 576) {
-          mp4video.src = "/wp-content/uploads/videos/film_small.mp4";
-          video.load();
-        } else if (window.innerWidth < 1200) {
-          mp4video.src = "/wp-content/uploads/videos/film_medium.mp4";
-          video.load();
-        } else {
-          mp4video.src = "/wp-content/uploads/videos/film_medium.mp4";
-          video.load();
-        }
-      }
-    }
-    
-    function resize() {
-      if (window.innerWidth != previous_width) {
-        previous_width = window.innerWidth;
-        var video = document.getElementById('video');
-        if (video) {
-          var delta = 50;
-          var window_width = window.innerWidth;
-          var window_height = window.innerHeight;
-    
-          var width = window_width + delta;
-          var height = width * 9 / 16;
-          if (height < window_height) {
-            height = window_height + delta;
-            width = height * 16 / 9;
-          }
-          video.width = width;
-          video.height = height;
-        }
-      }
-    }
-    var previous_width;
-</script>
-
 
 <body>
     <header>
@@ -63,29 +18,28 @@
             </svg> 
             <h1 class="display-5 fw-bold lh-1">Home PiggyBank</h1>
         </div>
-
         <ul class="sidenav border">        
-            <li class="nav-item nav-item-activ"><a class="nav-link" href="/">HOME</a></li>
-            <li class="nav-item"><a class="nav-link" href="/incomes/new">DODAJ PRZYCHÓD</a></li>
-            <li class="nav-item"><a class="nav-link" href="/expenses/new">DODAJ WYDATEK</a></li>
-            <li class="nav-item"><a class="nav-link" href="/bilans/new">PRZEGLĄDAJ BILANS</a></li>
-            {% if current_user %}
-            <li class="nav-item right"><a class="active" href="/logout">WYLOGUJ SIĘ!</a></li>                                
-            <li class="nav-item right"><a class="nav-link" href="/profile/show">USTAWIENIA</a></li>
-            {% endif %}   
-            <li class="nav-item right"><a class="nav-link" href="">WYBIERZ OKRES BILANSU</a></li>        
+          <li class="nav-item"> <a class="nav-link" href="/"><svg width="25" height="20" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M247 218.37H153V350H247V218.37Z" stroke="#6A0BFF" stroke-width="12" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M56.54 193.46L200 60L343.46 193.46" stroke="#191919" stroke-width="12" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M333.33 184.04V350H66.67V184.04" stroke="#191919" stroke-width="12" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg> HOME</a></li>
+          <li class="nav-item"><a class="nav-link" href="/incomes/new">DODAJ PRZYCHÓD</a></li>
+          <li class="nav-item"><a class="nav-link" href="/expenses/new">DODAJ WYDATEK</a></li>
+          <li class="nav-item"><a class="nav-link" href="/bilans/show">PRZEGLĄDAJ BILANS</a></li>
+          {% if current_user %}
+          <li class="nav-item right"><a class="active" href="/logout">WYLOGUJ SIĘ!</a></li>                                
+          <li class="nav-item right"><a class="nav-link" href="/profile/show">USTAWIENIA</a></li>
+          {% endif %}           
         </ul>
-        
+     
     </header>
 
-    <div class="fullscreen-video">
-        <video id="video" playsinline muted onplaying="this.controls=false" autoplay loop>
-          <source id="mp4" src="/public/images/vid.mp4" type="video/mp4">
-        </video>
-    </div>
+    <video autoplay loop muted plays-inline class="back">
+        <source src="/images/vid.mp4" type="video/mp4">
+    </video>
 
-
-    <div class="container mx-5 text-center">
+    <div class="container justify-content-center my-4">
         
         <div>
             {% for message in flash_messages %}
