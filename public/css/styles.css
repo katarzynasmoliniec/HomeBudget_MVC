@@ -104,7 +104,10 @@ ul.sidenav li a:hover:not(.active) {
 
 @media screen and (max-width: 1080px) {
     ul.sidenav li.right, 
-    ul.sidenav li {float: none;}
+    ul.sidenav li {float: none;};
+    .myDiv {
+        justify-content: center;
+    }
   }
 
 @keyframes gradient-animation {

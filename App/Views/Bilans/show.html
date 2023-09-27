@@ -6,45 +6,94 @@
 {% block footer %}
 <script src='https://cdn.plot.ly/plotly-2.26.0.min.js'></script>
 <script>
-    var lab = [];
-    var val = [];
+
+{% if expense_balances is not null or expense_balances is not empty %}
+    var lab1 = [];
+    var val1 = [];
     {% for expense in expense_balances %}
-        lab [{{ loop.index }}] = '{{ expense.name }}'
-        val [{{ loop.index }}]  = {{expense.sumexpense}}
+        lab1 [{{ loop.index }}] = '{{ expense.name }}'
+        val1 [{{ loop.index }}]  = {{expense.sumexpense}}
     {% endfor %};
 
+    var lab2 = [];
+    var val2 = [];
+    {% for income in income_balances %}
+        lab2 [{{ loop.index }}] = '{{ income.name }}'
+        val2 [{{ loop.index }}]  = {{income.sumincome}}
+    {% endfor %};
+
+{% else %}
+
+    var lab1 = [];
+    var val1 = [];
+    {% for expense in expense_balanceOfDate %}
+        lab1 [{{ loop.index }}] = '{{ expense.name }}'
+        val1 [{{ loop.index }}]  = {{expense.sumexpense}}
+    {% endfor %};
+
+    var lab2 = [];
+    var val2 = [];
+    {% for income in income_balanceOfDate %}
+        lab2 [{{ loop.index }}] = '{{ income.name }}'
+        val2 [{{ loop.index }}]  = {{income.sumincome}}
+    {% endfor %};
+{% endif %}
+
+
     var data = [{
-        values: val,
-        labels: lab,
+        values: val1,
+        labels: lab1,
         textposition: 'inside',
-        domain: {column: 1},
+        domain: { row:1, column: 0},
         name: 'WYDATKI',
         hoverinfo: 'value+label+name',
-        hole: .4,
+        hole: .5,
+        type: 'pie'
+        }, {
+        values: val2,
+        labels: lab2,
+        textposition: 'inside',
+        domain: {row:0, column: 0},
+        name: 'PRZYCHODY',
+        hoverinfo: 'value+label+name',
+        hole: .5,
         type: 'pie'
         }];
 
     var layout = {
-    annotations: [{
-        font: {
-            size: 20
-        },
-        showarrow: false,
-        text: 'Wydatki',
-        x: 0.5,
-        y: 0.5,
-
-        }],
-    showlegend: false,
-    height: 400,
-    margin: {"t": 0, "b": 0, "l": 0, "r": 0},
-    paper_bgcolor: 'transparent',
-    modebar: {
-        bgcolor: 'transparent'
-    }
+        annotations: [{
+            font: {
+                size: 20,
+                color: '#f7f0ef'
+                },
+            showarrow: false,
+            text: 'Wydatki',
+            x: 0.5,
+            y: 0.2}, {
+            font: {
+                size: 20,
+                color: '#f7f0ef'
+                },
+            showarrow: false,
+            text: 'Przychody',
+            x: 0.5,
+            y: 0.80
+            }],
+        showlegend: false,
+        height: 450,
+        margin: {"t": 0, "b": 0, "l": 0, "r": 0},
+        paper_bgcolor: 'transparent',
+        modebar: {
+            bgcolor: 'transparent'
+            },
+        grid: {rows: 2, columns: 1}
     };
 
     {% if expense_balances is not null or expense_balances is not empty %}
+    Plotly.newPlot('myDiv', data, layout, {displaylogo: false});
+    {% endif %}
+
+    {% if income_balanceOfDate is not null or income_balanceOfDate is not empty and expense_balanceOfDate is not null or expense_balanceOfDate or empty %}
     Plotly.newPlot('myDiv', data, layout, {displaylogo: false});
     {% endif %}
 
@@ -63,25 +112,26 @@
                     </div>
                 {% endif %}
                 <div class="row p-3">
-                    <div class="col-lg-3 col-md-12"> 
+                    <div class="col-lg-4 col-md-12"> 
                         <select class="form-select"  name="period" required>
                             <option value="">Wybierz okres</option>
                             <option value="last_month">Poprzedni miesiąc</option>
                             <option value="current_year">Bieżący rok</option>
                             <option value="custom_period">Dostosuj</option>
-                        </select>             
+                        </select>
+                        <div class="mt-1">
+                            <button class="w-100 btn btn-outline-dark rounded-3 btn-sm">Pokaż bilans</button>
+                        </div>             
                     </div>
-                    <div class="col-lg-3 col-md-12">
+                    <div class="col-lg-4 col-md-12">
                         <label class="form-label hidden" type="date" for="start_date">Data od:</label>
                         <input class="form-control hidden " type="date" name="start_date" min='2000-01-01' id="start_date" >
                     </div>
-                    <div class="col-lg-3 col-md-12">
+                    <div class="col-lg-4 col-md-12">
                         <label class="form-label hidden" for="end_date">Data do:</label>
                         <input class="form-control hidden" type="date" name="end_date" min='2000-01-01' id="end_date">
                     </div>
-                    <div class="col-lg-3 col-md-12 p-2">
-                        <button class="mx-2 btn btn-outline-dark rounded-3 btn-sm">Pokaż bilans</button>
-                    </div>
+                    
                 </div>
             </form>
 
@@ -91,8 +141,6 @@
                     <div class="col-lg-8">
                         <div class="col-lg-12 m-0">
                             <h3 class="text-center">Przychody</h3>
-
-                            
                             <table class="table table-success table-striped">
                                 <thead>
                                     <tr>
@@ -119,7 +167,7 @@
                                         </tr>
                                     {% endif %}
                                 </tbody>
-                                </table>
+                            </table>
                         </div>
                         <div class="col-lg-12 m-0">
                             <h3 class="text-center">Wydatki</h3>
@@ -167,6 +215,7 @@
                         <div id='myDiv' class=" p-0 pt-2"></div>
                     </div>
                 </div>
+
                 {% else %}
                 
                 <h1 class="background mb-0 fs-2 mb-2 pb-2">Bilans z bieżacego miesiąca!</h1>
@@ -245,7 +294,7 @@
                             {% else %}
                                 <h5>Twój bilans jest zerowy</h5> 
                         {% endif %}                          
-                        <div id='myDiv' class=" p-0 pt-2"></div>
+                        <div id='myDiv' class="p-0 pt-2"></div>
                     </div>
                 </div>
             {% endif %}
