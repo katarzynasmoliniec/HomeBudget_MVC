@@ -2,163 +2,254 @@
 
 {% block title %}Bilans{% endblock %}
 
+
 {% block footer %}
-
+<script src='https://cdn.plot.ly/plotly-2.26.0.min.js'></script>
 <script>
-    const xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
-    const yValues = [55, 49, 44, 24, 15];
-    const barColors = [
-    "#b91d47",
-    "#00aba9",
-    "#2b5797",
-    "#e8c3b9",
-    "#1e7145"
-    ];
+    var lab = [];
+    var val = [];
+    {% for expense in expense_balances %}
+        lab [{{ loop.index }}] = '{{ expense.name }}'
+        val [{{ loop.index }}]  = {{expense.sumexpense}}
+    {% endfor %};
 
-    new Chart("myChart", {
-    type: "doughnut",
-    data: {
-        labels: xValues,
-        datasets: [{
-        backgroundColor: barColors,
-        data: yValues
-        }]
-    },
-    options: {
-        title: {
-        display: true,
-        text: "Wykres Twoich wydatków!"
-        }
-    }
-    });
-</script>
-<script>
     var data = [{
-    values: [27, 11, 25, 8, 1, 3, 25],
-    labels: ['US', 'China', 'European Union', 'Russian Federation', 'Brazil', 'India', 'Rest of World' ],
-    textposition: 'inside',
-    domain: {column: 1},
-    name: 'WYDATKI',
-    hoverinfo: 'value+label+name',
-    hole: .5,
-    type: 'pie'
-    }];
+        values: val,
+        labels: lab,
+        textposition: 'inside',
+        domain: {column: 1},
+        name: 'WYDATKI',
+        hoverinfo: 'value+label+name',
+        hole: .4,
+        type: 'pie'
+        }];
 
     var layout = {
-    annotations: [
-        {
+    annotations: [{
         font: {
             size: 20
         },
         showarrow: false,
         text: 'Wydatki',
         x: 0.5,
-        y: 0.5
-        }
-    ],
+        y: 0.5,
+
+        }],
     showlegend: false,
     height: 400,
+    margin: {"t": 0, "b": 0, "l": 0, "r": 0},
+    paper_bgcolor: 'transparent',
+    modebar: {
+        bgcolor: 'transparent'
+    }
     };
 
-    Plotly.newPlot('myDiv', data, layout);
+    {% if expense_balances is not null or expense_balances is not empty %}
+    Plotly.newPlot('myDiv', data, layout, {displaylogo: false});
+    {% endif %}
 
 </script>
-
+<script src="/js/balance.js"></script>
 {% endblock %}
-
 {% block body %}
 
 <section style="margin-bottom: 95px;">
     <div class="col-md-10 mx-auto my-4 py-5 col-lg-12 text-body-secondary">
-        <form method="post" action="/bilans/show" id="formBilans" class="p-3 p-md-4 border rounded-3 bg-body-tertiary">
-            <h1 class="background mb-0 fs-2 mb-2 pb-2">Bilans z bieżacego miesiąca!</h1>
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="col-lg-12 m-0">
-                        <h3 class="text-center">Przychody</h3>
-                        <table class="table table-success table-striped">
-                            <thead>
-                               <tr>
-                                  <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th colspan="2">Komentarz</th> <th></th>
-                               </tr>
-                            </thead>
-                            <tbody>
-                                {% if incomes %}
-                                
-                                    {% for income in incomes %}
-                                        <tr>    
-                                            <td>{{ loop.index }}</td>
-                                            <td>{{ income.name }}</td>
-                                            <td>{{ income.amount }} zł</td>
-                                            <td>{{ income.date_of_income }}</td>
-                                            <td colspan="2">{{income.income_comment}}</td> <td></td>
-                                        </tr>
-                                     {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="7">Brak przychodów!</td>
-                                    </tr>
-                                {% endif %}
-                            </tbody>
-                         </table>
+        <div class="p-3 p-md-4 border rounded-3 bg-body-tertiary">
+            <form method="post" action="/bilans/edit" id="formBilans" class="col-lg-12">
+                {% if session.e_period is defined %}
+                    <div class="error">
+                        {{ session.e_period }}
                     </div>
-                    <div class="col-lg-12 m-0">
-                        <h3 class="text-center">Wydatki</h3>
-                        <table class="table table-warning table-striped">
-                            <thead>
-                               <tr>
-                                  <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th>Rodzaj płatności</th><th colspan="2">Komentarz</th> <th></th>
-                               </tr>
-                            </thead>
-                            <tbody>
-                                {% if expenses %}
-                                
-                                    {% for expense in expenses %}
-                                        <tr>    
-                                            <td>{{ loop.index }}</td>
-                                            <td>{{ expense.name }}</td>
-                                            <td>{{ expense.amount }} zł</td>
-                                            <td>{{ expense.date_of_expense }}</td>
-                                            <td>{{ expense.payname }}</td>
-                                            <td colspan="2">{{expense.expense_comment}}</td> <td></td>
-                                        </tr>
-                                     {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="8">Brak wydatków!</td>
-                                    </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
+                {% endif %}
+                <div class="row p-3">
+                    <div class="col-lg-3 col-md-12"> 
+                        <select class="form-select"  name="period" required>
+                            <option value="">Wybierz okres</option>
+                            <option value="last_month">Poprzedni miesiąc</option>
+                            <option value="current_year">Bieżący rok</option>
+                            <option value="custom_period">Dostosuj</option>
+                        </select>             
+                    </div>
+                    <div class="col-lg-3 col-md-12">
+                        <label class="form-label hidden" type="date" for="start_date">Data od:</label>
+                        <input class="form-control hidden " type="date" name="start_date" min='2000-01-01' id="start_date" >
+                    </div>
+                    <div class="col-lg-3 col-md-12">
+                        <label class="form-label hidden" for="end_date">Data do:</label>
+                        <input class="form-control hidden" type="date" name="end_date" min='2000-01-01' id="end_date">
+                    </div>
+                    <div class="col-lg-3 col-md-12 p-2">
+                        <button class="mx-2 btn btn-outline-dark rounded-3 btn-sm">Pokaż bilans</button>
                     </div>
                 </div>
-                
-                <div class="background col-lg-4 m-0 text-center">
-                    <h3 class="py-2" style="border-bottom: solid;" >Bilans z bieżącego miesiąca</h3>
-                    {% set sumincomes = 0 %}
-                    {% for income in incomes %}
-                        {% set sumincomes = sumincomes + income.amount %}
-                    {% endfor %} 
-                    {% set sumexpenses = 0 %}
-                    {% for income in expenses %}
-                        {% set sumexpenses = sumexpenses + income.amount %}
-                    {% endfor %} 
-                    {% set sumincomes = sumincomes - sumexpenses %}
-                    <h4>{{ sumincomes }} zł</h4>
-                    {% if sumincomes > 0 %}
-                        <h5>Brawo Twój bilans jest dodatni!</h5>
-                        {% elseif sumincomes < 0 %}
-                            <h5>Niestety Twój bilans jest ujemny!</h5>
-                        {% else %}
-                            <h5>Twój bilans jest zerowy</h5> 
-                    {% endif %}  
-                    
-                    <div id='myDiv' class=""></div>
-                </div>
+            </form>
 
+            {% if incomesOfDates is not null or expensesOfDates is not null %}
+                <h1 class="background mb-0 fs-2 mb-2 pb-2">Bilans od {{start_date}} do {{end_date}}!</h1>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="col-lg-12 m-0">
+                            <h3 class="text-center">Przychody</h3>
+
+                            
+                            <table class="table table-success table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th colspan="2">Komentarz</th> <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if incomesOfDates %}
+                                        {% set sumincomes = 0 %}    
+                                        {% for income in incomesOfDates %}
+                                            {% set sumincomes = sumincomes + income.amount %}
+                                            <tr>    
+                                                <td>{{ loop.index }}</td>
+                                                <td>{{ income.name }}</td>
+                                                <td>{{ income.amount }} zł</td>
+                                                
+                                                <td>{{ income.date_of_income }}</td>
+                                                <td colspan="2">{{income.income_comment}}</td> <td></td>
+                                            </tr>
+                                            {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="7">Brak przychodów!</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                                </table>
+                        </div>
+                        <div class="col-lg-12 m-0">
+                            <h3 class="text-center">Wydatki</h3>
+                            <table class="table table-warning table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th>Rodzaj płatności</th><th colspan="2">Komentarz</th> <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if expensesOfDates %} 
+                                        {% set sumexpenses = 0 %}
+                                        {% for expense in expensesOfDates %}
+                                            {% set sumexpenses = sumexpenses + expense.amount %}
+                                            <tr>    
+                                                <td>{{ loop.index }}</td>
+                                                <td>{{ expense.name }}</td>
+                                                <td>{{ expense.amount }} zł</td>
+                                                <td>{{ expense.date_of_expense }}</td>
+                                                <td>{{ expense.payname }}</td>
+                                                <td colspan="2">{{expense.expense_comment}}</td> <td></td>
+                                            </tr>
+                                            {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="8">Brak wydatków!</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="background col-lg-4 m-0 text-center">
+                        <h3 class="py-2" style="border-bottom: solid;" >Zestawienie bilansu </h3>
+                        {% set sumbilans = sumincomes - sumexpenses %}
+                        <h4>{{ sumbilans }} zł</h4>
+                        {% if sumbilans > 0 %}
+                            <h5>Brawo Twój bilans jest dodatni!</h5>
+                            {% elseif sumbilans < 0 %}
+                                <h5>Niestety Twój bilans jest ujemny!</h5>
+                            {% else %}
+                                <h5>Twój bilans jest zerowy</h5> 
+                        {% endif %}
+                        <div id='myDiv' class=" p-0 pt-2"></div>
+                    </div>
+                </div>
+                {% else %}
                 
-            </div>
-        </form>
+                <h1 class="background mb-0 fs-2 mb-2 pb-2">Bilans z bieżacego miesiąca!</h1>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="col-lg-12 m-0">
+                            <h3 class="text-center">Przychody</h3>
+                            <table class="table table-success table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th colspan="2">Komentarz</th> <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if incomes %}
+                                        {% set sumincomes = 0 %}    
+                                        {% for income in incomes %}
+                                            {% set sumincomes = sumincomes + income.amount %}
+                                            <tr>    
+                                                <td>{{ loop.index }}</td>
+                                                <td>{{ income.name }}</td>
+                                                <td>{{ income.amount }} zł</td>
+                                                
+                                                <td>{{ income.date_of_income }}</td>
+                                                <td colspan="2">{{income.income_comment}}</td> <td></td>
+                                            </tr>
+                                            {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="7">Brak przychodów!</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                                </table>
+                        </div>
+                        <div class="col-lg-12 m-0">
+                            <h3 class="text-center">Wydatki</h3>
+                            <table class="table table-warning table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th>Rodzaj płatności</th><th colspan="2">Komentarz</th> <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if expenses %} 
+                                        {% set sumexpenses = 0 %}
+                                        {% for expense in expenses %}
+                                            {% set sumexpenses = sumexpenses + expense.amount %}
+                                            <tr>    
+                                                <td>{{ loop.index }}</td>
+                                                <td>{{ expense.name }}</td>
+                                                <td>{{ expense.amount }} zł</td>
+                                                <td>{{ expense.date_of_expense }}</td>
+                                                <td>{{ expense.payname }}</td>
+                                                <td colspan="2">{{expense.expense_comment}}</td> <td></td>
+                                            </tr>
+                                            {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="8">Brak wydatków!</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="background col-lg-4 m-0 text-center">
+                        <h3 class="py-2" style="border-bottom: solid;" >Zestawienie bilansu</h3>
+                        {% set sumbilans = sumincomes - sumexpenses %}
+                        <h4>{{ sumbilans }} zł</h4>
+                        {% if sumbilans > 0 %}
+                            <h5>Brawo Twój bilans jest dodatni!</h5>
+                            {% elseif sumbilans < 0 %}
+                                <h5>Niestety Twój bilans jest ujemny!</h5>
+                            {% else %}
+                                <h5>Twój bilans jest zerowy</h5> 
+                        {% endif %}                          
+                        <div id='myDiv' class=" p-0 pt-2"></div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </section>
 {% endblock %}

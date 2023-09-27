@@ -46,8 +46,6 @@ class Signup extends \Core\Controller
 
     public function activatedAction()
     {
-        Category::setStartCategory();
-        Payform::setStartPayform();
         View::renderTemplate('Signup/activated.html');
     }
 }

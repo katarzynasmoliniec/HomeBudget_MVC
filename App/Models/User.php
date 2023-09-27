@@ -282,6 +282,12 @@ class User extends \Core\Model
         $token = new Token($value);
         $hashed_token = $token->getHash();
 
+        $user_id = static::findByActivationToken($hashed_token);
+
+        static::setStartExpenseCategory($user_id);
+        static::setStartIncomeCategory($user_id);
+        static::setStartPayform($user_id);
+
         $sql = 'UPDATE users
                 SET is_active = 1,
                     activation_hash = null
@@ -293,6 +299,54 @@ class User extends \Core\Model
         $stmt->bindValue(':hashed_token', $hashed_token, PDO::PARAM_STR);
 
         $stmt->execute();                
+    }
+
+    public static function findByActivationToken($hashed_token)
+    {
+        $sql = 'SELECT id FROM users
+                WHERE activation_hash = :hashed_token';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':hashed_token', $hashed_token, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $fetchArray = $stmt->fetch();
+        return $fetchArray['id'];
+    }
+
+    public static function setStartExpenseCategory($user_id)
+    {
+        $sql = 'INSERT INTO expenses_category_assigned_to_users (`user_id`, `name`)
+                SELECT :user_id, `name` FROM expenses_category_default';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+    public static function setStartIncomeCategory($user_id)
+    {
+
+        $sql = 'INSERT INTO incomes_category_assigned_to_users (`user_id`, `name`)
+                SELECT :user_id, `name` FROM incomes_category_default';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+    public static function setStartPayform($user_id)
+    {
+        $sql = 'INSERT INTO payment_methods_assigned_to_users (`user_id`, `name`)
+                SELECT :user_id, `name` FROM payment_methods_default';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_STR);
+        $stmt->execute();
     }
 
     public function updateProfile($data)

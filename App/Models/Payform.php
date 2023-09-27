@@ -7,17 +7,6 @@ use PDO;
 class Payform extends \Core\Model
 {
     
-    public static function setStartPayform()
-    {
-        $sql = 'INSERT INTO  payment_methods_assigned_to_users (user_id, name)
-                SELECT users.id, payment_methods_default.name 
-                FROM users, payment_methods_default where users.id = users.id';
-
-        $db = static::getDB();
-        $stmt = $db->prepare($sql);
-        return $stmt->execute();
-    }
-
 
     public static function getNamePayform($user_id)
     {

@@ -7,18 +7,6 @@ use PDO;
 class Expense extends \Core\Model
 {
     public $errors = [];
-    public $cats = [];
-    public $payforms = [];
-
-    public $amount;
-    public $date;
-    public $category_id;
-    public $name_category;
-    public $pay;
-    public $user_id;
-    public $expense_id;
-    public $comment;
-
         
     public function __construct($data = [])
     {
@@ -49,7 +37,6 @@ class Expense extends \Core\Model
 
             return $stmt->execute();
         }
-
         return false;
     }
 
@@ -66,12 +53,9 @@ class Expense extends \Core\Model
         if ($this->pay == '') {
             $this->errors[] = 'Proszę podać sposób płatności';
         }
-
     }
 
-    public static function getExpenses() {
-
-        $user_id = $_SESSION['user_id'];
+    public static function getExpenses($user_id) {
 
         $sql = 'SELECT expenses_category_assigned_to_users.name AS name, expenses.id, expenses.amount, expenses.date_of_expense, expenses.expense_comment,
                         payment_methods_assigned_to_users.name AS payname
@@ -86,29 +70,44 @@ class Expense extends \Core\Model
         $db = static::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-
         $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function getExpensesCategorizedCurrentDate($user_id) {
+         
+        $sql = 'SELECT expenses_category_assigned_to_users.name AS name, SUM(expenses.amount) AS sumexpense
+                FROM expenses
+            LEFT JOIN expenses_category_assigned_to_users ON expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
+            INNER JOIN users ON expenses.user_id = users.id
+            WHERE users.id = :user_id AND MONTH(expenses.date_of_expense) = MONTH(CURDATE()) AND YEAR(expenses.date_of_expense) = YEAR(CURDATE())
+            GROUP BY name';
         
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-        $expenses = [];
-        $previous_id = null;
+    public static function getExpensesofDate($user_id, $start_date, $end_date)
+    {
+        $sql = 'SELECT expenses_category_assigned_to_users.name AS name, expenses.id, expenses.amount, expenses.date_of_expense, expenses.expense_comment,
+                        payment_methods_assigned_to_users.name AS payname
+                FROM expenses
+                    LEFT JOIN expenses_category_assigned_to_users ON 
+                        expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
+                    INNER JOIN users ON expenses.user_id = users.id
+                    INNER JOIN payment_methods_assigned_to_users 
+                    ON payment_methods_assigned_to_users.id = expenses.payment_method_assigned_to_user_id 
+                WHERE users.id = :user_id AND expenses.date_of_expense BETWEEN :startDate AND :endDate';
 
-        foreach ($results as $row) {
-
-            $expense_id = $row['id'];
-
-            if ($expense_id != $previous_id) {
-                $row['names'] = [];
-                $row['paynames'] = [];
-                $expenses[$expense_id] = $row;
-            }
-
-            $expenses[$expense_id]['names'][] = $row['name'];
-            $expenses[$expense_id]['paynames'][] = $row['payname'];
-            $previous_id =$expense_id;
-        }
-
-        return $expenses;
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':startDate', $start_date, PDO::PARAM_STR);
+        $stmt->bindParam(':endDate', $end_date, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
