@@ -14,7 +14,7 @@ class Expenses extends Authenticated
     {
         parent::before();
         $user_id = $_SESSION['user_id'];
-        $this-> cats = Category::getNameCategoryExpense($user_id);
+        $this-> categs = Category::getNameCategoryExpense($user_id);
         $this-> payforms = Payform::getNamePayform($user_id);
     }
     
@@ -23,7 +23,7 @@ class Expenses extends Authenticated
     {
 
         View::renderTemplate('Expenses/new.html', [
-            'cats' => $this->cats,
+            'categs' => $this->categs,
             'payforms' => $this ->payforms
         ]);
     }
@@ -36,13 +36,13 @@ class Expenses extends Authenticated
 
             Flash::addMessage('Wydatek dodany!');
             View::renderTemplate('Expenses/new.html', [
-                'cats' => $this->cats,
+                'categs' => $this->categs,
                 'payforms' => $this ->payforms
             ]);
 
         } else {
             View::renderTemplate('Expenses/new.html', [
-                'cats' => $this->cats,
+                'categs' => $this->categs,
                 'payforms' => $this ->payforms
             ]);
         }

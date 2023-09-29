@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
+use App\Flash;
 use PDO;
-use \App\Token;
-use \App\Mail;
-use \Core\View;
 
 class Income extends \Core\Model
 {
@@ -52,27 +50,9 @@ class Income extends \Core\Model
         }
     }
 
-    public static function getIncomesCurrentDate() {
-
-        $user_id = $_SESSION['user_id'];
-
-        $sql = 'SELECT incomes_category_assigned_to_users.name AS name, incomes.amount, incomes.date_of_income, incomes.income_comment
-                FROM incomes
-                    LEFT JOIN incomes_category_assigned_to_users ON 
-                        incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
-                    INNER JOIN users ON incomes.user_id = users.id
-                WHERE users.id = :user_id AND MONTH(incomes.date_of_income) = MONTH(CURDATE()) AND YEAR(incomes.date_of_income) = YEAR(CURDATE())';
-
-        $db = static::getDB();
-        $stmt = $db->prepare($sql);
-        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public static function getIncomesofDates($user_id, $start_date, $end_date)
     {
-        $sql = 'SELECT incomes_category_assigned_to_users.name AS name, incomes.amount, incomes.date_of_income, incomes.income_comment
+        $sql = 'SELECT incomes_category_assigned_to_users.name AS name, incomes.id, incomes.amount, incomes.date_of_income, incomes.income_comment
                 FROM incomes
                     LEFT JOIN incomes_category_assigned_to_users ON 
                         incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
@@ -84,22 +64,6 @@ class Income extends \Core\Model
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $stmt->bindParam(':startDate', $start_date, PDO::PARAM_STR);
         $stmt->bindParam(':endDate', $end_date, PDO::PARAM_STR);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public static function getBalanceCategorizedCurrentDate($user_id) {
-
-        $sql = 'SELECT incomes_category_assigned_to_users.name AS name, SUM(incomes.amount) AS sumincome
-                FROM incomes
-            LEFT JOIN incomes_category_assigned_to_users ON incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
-            INNER JOIN users ON incomes.user_id = users.id
-            WHERE users.id = :user_id AND MONTH(incomes.date_of_income) = MONTH(CURDATE()) AND YEAR(incomes.date_of_income) = YEAR(CURDATE())
-            GROUP BY name';
-        
-        $db = static::getDB();
-        $stmt = $db->prepare($sql);
-        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -119,6 +83,25 @@ class Income extends \Core\Model
         $stmt->bindParam(':endDate', $end_date, PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function removeIncome($user_id, $id)
+    {
+        $response = ["message_type" => "", "message" => ""];
+
+        $sql = 'DELETE FROM `incomes`
+                WHERE `user_id` = :user_id AND `id` = :id';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        $stmt->execute();
+        $response["message_type"] = "success";
+        $response["message"] = "Zmiany zachowane!";
+
+        return $response;
     }
 
 }

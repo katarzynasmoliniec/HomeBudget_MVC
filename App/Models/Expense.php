@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use PDO;
+use App\Flash;
 
 class Expense extends \Core\Model
 {
@@ -55,44 +56,9 @@ class Expense extends \Core\Model
         }
     }
 
-    public static function getExpensesCurrentDate($user_id) {
-
-        $sql = 'SELECT expenses_category_assigned_to_users.name AS name, expenses.amount, expenses.date_of_expense, expenses.expense_comment,
-                        payment_methods_assigned_to_users.name AS payname
-                FROM expenses
-                    LEFT JOIN expenses_category_assigned_to_users ON 
-                        expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
-                    INNER JOIN users ON expenses.user_id = users.id
-                    INNER JOIN payment_methods_assigned_to_users 
-                    ON payment_methods_assigned_to_users.id = expenses.payment_method_assigned_to_user_id 
-                WHERE users.id = :user_id AND MONTH(expenses.date_of_expense) = MONTH(CURDATE())';
-
-        $db = static::getDB();
-        $stmt = $db->prepare($sql);
-        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public static function getBalanceCategorizedCurrentDate($user_id) {
-         
-        $sql = 'SELECT expenses_category_assigned_to_users.name AS name, SUM(expenses.amount) AS sumexpense
-                FROM expenses
-            LEFT JOIN expenses_category_assigned_to_users ON expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
-            INNER JOIN users ON expenses.user_id = users.id
-            WHERE users.id = :user_id AND MONTH(expenses.date_of_expense) = MONTH(CURDATE()) AND YEAR(expenses.date_of_expense) = YEAR(CURDATE())
-            GROUP BY name';
-        
-        $db = static::getDB();
-        $stmt = $db->prepare($sql);
-        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public static function getExpensesofDate($user_id, $start_date, $end_date)
     {
-        $sql = 'SELECT expenses_category_assigned_to_users.name AS name, expenses.amount, expenses.date_of_expense, expenses.expense_comment,
+        $sql = 'SELECT expenses_category_assigned_to_users.name AS name, expenses.id, expenses.amount, expenses.date_of_expense, expenses.expense_comment,
                         payment_methods_assigned_to_users.name AS payname
                 FROM expenses
                     LEFT JOIN expenses_category_assigned_to_users ON 
@@ -127,5 +93,24 @@ class Expense extends \Core\Model
         $stmt->bindParam(':endDate', $end_date, PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public static function removeExpense($user_id, $id)
+    {
+        $response = ["message_type" => "", "message" => ""];
+        
+        $sql = 'DELETE FROM `expenses`
+                WHERE `user_id` = :user_id AND `id` = :id';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        $stmt->execute();
+        $response["message_type"] = "success";
+        $response["message"] = "Zmiany zachowane!";
+
+        return $response;
     }
 }

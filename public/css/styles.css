@@ -10,6 +10,7 @@ body {
     min-height:100%;
     position:relative;
     width: 100%;
+    padding:0;
 }
 
 .back{
@@ -107,6 +108,9 @@ ul.sidenav li a:hover:not(.active) {
     ul.sidenav li {float: none;};
     .myDiv {
         justify-content: center;
+    }
+    .container {
+        margin:0;
     }
   }
 

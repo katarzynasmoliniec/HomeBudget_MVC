@@ -13,7 +13,7 @@ class Incomes extends Authenticated
     {
         parent::before();
         $user_id = $_SESSION['user_id'];
-        $this-> cats = Category::getNameCategoryIncome($user_id);
+        $this-> categs = Category::getNameCategoryIncome($user_id);
     }
     
     
@@ -21,7 +21,7 @@ class Incomes extends Authenticated
     {
 
         View::renderTemplate('Incomes/new.html', [
-            'cats' => $this->cats
+            'categs' => $this->categs
         ]);
     }
 
@@ -33,12 +33,12 @@ class Incomes extends Authenticated
 
             Flash::addMessage('Przychód dodany!');
             View::renderTemplate('Incomes/new.html', [
-                'cats' => $this->cats
+                'categs' => $this->categs
             ]);
 
         } else {
             View::renderTemplate('Incomes/new.html', [
-                'cats' => $this->cats
+                'categs' => $this->categs
             ]);
         }
     }

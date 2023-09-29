@@ -12,11 +12,7 @@ class Bilans extends Authenticated
     protected function before()
     {
         parent::before();
-        $user_id = $_SESSION['user_id'];
-        $this->incomes = Income::getIncomesCurrentDate($user_id);
-        $this->expenses = Expense::getExpensesCurrentDate($user_id);
-        $this->expense_balances = Expense::getBalanceCategorizedCurrentDate($user_id);
-        $this->income_balances = Income::getBalanceCategorizedCurrentDate($user_id);
+        $this->user_id = $_SESSION['user_id'];
     }
 
     protected function after()
@@ -27,18 +23,16 @@ class Bilans extends Authenticated
     public function showAction()
     {  
         View::renderTemplate('Bilans/show.html', [
-            'incomes' => $this->incomes,
-            'expenses' => $this->expenses,
-            'expense_balances' => $this->expense_balances,
-            'income_balances' => $this->income_balances
+            'user_id' => $this->user_id,
+            'active' => 'balance'
         ]);
     }
 
     public function editAction()
     {
+        
         if (!isset($_POST['period'])) {
             $this->redirect('/bilans/show');
-            exit;
         }
 
         $user_id = $_SESSION['user_id'];
@@ -51,7 +45,8 @@ class Bilans extends Authenticated
         $dateRange = DateValidator::validateDate($period, $currentYear, $currentMonth);
 
         if (empty($dateRange)) {
-            $this->redirect('/bilanse/show');
+            $this->redirect('/bilans/show');
+
             exit;
         }
 
@@ -74,6 +69,22 @@ class Bilans extends Authenticated
             'expense_balanceOfDate' => $expense_balanceOfDate
         ]);
 
+    }
+
+    public function removeIncomeAction()
+    {
+        $user_id = $_SESSION['user_id'];
+        $id = $this->route_params['id'];
+
+        echo json_encode(Income::removeIncome($user_id, $id), JSON_UNESCAPED_UNICODE);
+    }
+
+    public function removeExpenseAction()
+    {
+        $user_id = $_SESSION['user_id'];
+        $id = $this->route_params['id'];
+
+        echo json_encode(Expense::removeExpense($user_id, $id), JSON_UNESCAPED_UNICODE);
     }
 
 }

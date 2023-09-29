@@ -7,30 +7,16 @@
 <script src='https://cdn.plot.ly/plotly-2.26.0.min.js'></script>
 <script>
 
-{% if expense_balances is not null or expense_balances is not empty %}
-    var lab1 = [];
-    var val1 = [];
-    {% for expense in expense_balances %}
-        lab1 [{{ loop.index }}] = '{{ expense.name }}'
-        val1 [{{ loop.index }}]  = {{expense.sumexpense}}
-    {% endfor %};
-
-    var lab2 = [];
-    var val2 = [];
-    {% for income in income_balances %}
-        lab2 [{{ loop.index }}] = '{{ income.name }}'
-        val2 [{{ loop.index }}]  = {{income.sumincome}}
-    {% endfor %};
-
-{% else %}
-
+{% if expense_balanceOfDate is not null or income_balanceOfDate is not empty %}
     var lab1 = [];
     var val1 = [];
     {% for expense in expense_balanceOfDate %}
         lab1 [{{ loop.index }}] = '{{ expense.name }}'
         val1 [{{ loop.index }}]  = {{expense.sumexpense}}
     {% endfor %};
+{% endif %}
 
+ {% if income_balanceOfDate is not null or income_balanceOfDate is not empty %}
     var lab2 = [];
     var val2 = [];
     {% for income in income_balanceOfDate %}
@@ -89,20 +75,48 @@
         grid: {rows: 2, columns: 1}
     };
 
-    {% if expense_balances is not null or expense_balances is not empty %}
-    Plotly.newPlot('myDiv', data, layout, {displaylogo: false});
-    {% endif %}
-
     {% if income_balanceOfDate is not null or income_balanceOfDate is not empty and expense_balanceOfDate is not null or expense_balanceOfDate or empty %}
-    Plotly.newPlot('myDiv', data, layout, {displaylogo: false});
+        Plotly.newPlot('myDiv', data, layout, {displaylogo: false});
     {% endif %}
 
 </script>
-<script src="/js/balance.js"></script>
+<script>
+// DOM Selectors
+    const removeModal = new bootstrap.Modal(document.querySelector('#remove-modal'));
+    const removeItemBtn = document.querySelector('#remove-btn');
+
+    const removeItem = async (item, id) => {
+        try {
+            removeModal.show();
+            removeItemBtn.addEventListener('click', () => confirmRemoveItems(item, id));
+        } catch (data) {
+            console.error(data.message);
+        }
+        
+    }
+
+    const confirmRemoveItems = async (item, id) => {
+        try {
+            const res = await fetch(`../bilans/remove-${item}/${id}`);
+            const data = await res.json();
+
+            if (data.message_type == 'success') {
+                sessionStorage.setItem('action', 'remove');
+                location.reload();
+            }
+        } catch (data) {
+            console.error(data.message);
+        }
+    }
+
+</script>
+
+<script src="/js/bilans.js"></script>
+
 {% endblock %}
 {% block body %}
 
-<section style="margin-bottom: 95px;">
+<section style="margin-bottom: 25px;">
     <div class="col-md-10 mx-auto my-4 py-5 col-lg-12 text-body-secondary">
         <div class="p-3 p-md-4 border rounded-3 bg-body-tertiary">
             <form method="post" action="/bilans/edit" id="formBilans" class="col-lg-12">
@@ -113,8 +127,9 @@
                 {% endif %}
                 <div class="row p-3">
                     <div class="col-lg-4 col-md-12"> 
-                        <select class="form-select"  name="period" required>
+                        <select class="form-select" name="period" required>
                             <option value="">Wybierz okres</option>
+                            <option value="current_month" selected="selected">Bieżący miesiąc</option>
                             <option value="last_month">Poprzedni miesiąc</option>
                             <option value="current_year">Bieżący rok</option>
                             <option value="custom_period">Dostosuj</option>
@@ -131,7 +146,6 @@
                         <label class="form-label hidden" for="end_date">Data do:</label>
                         <input class="form-control hidden" type="date" name="end_date" min='2000-01-01' id="end_date">
                     </div>
-                    
                 </div>
             </form>
 
@@ -144,7 +158,7 @@
                             <table class="table table-success table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th colspan="2">Komentarz</th> <th></th>
+                                        <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th colspan="3">Komentarz</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -156,9 +170,9 @@
                                                 <td>{{ loop.index }}</td>
                                                 <td>{{ income.name }}</td>
                                                 <td>{{ income.amount }} zł</td>
-                                                
                                                 <td>{{ income.date_of_income }}</td>
-                                                <td colspan="2">{{income.income_comment}}</td> <td></td>
+                                                <td colspan="2">{{income.income_comment}}</td>
+                                                <td><button class="btn btn-outline-dark rounded-3 btn-sm" onclick="removeItem('income', {{ income.id }})" type="button">Usuń</button></td>
                                             </tr>
                                             {% endfor %}
                                     {% else %}
@@ -174,7 +188,7 @@
                             <table class="table table-warning table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th>Rodzaj płatności</th><th colspan="2">Komentarz</th> <th></th>
+                                        <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th>Rodzaj płatności</th><th colspan="3">Komentarz</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -188,7 +202,8 @@
                                                 <td>{{ expense.amount }} zł</td>
                                                 <td>{{ expense.date_of_expense }}</td>
                                                 <td>{{ expense.payname }}</td>
-                                                <td colspan="2">{{expense.expense_comment}}</td> <td></td>
+                                                <td colspan="2">{{expense.expense_comment}}</td> 
+                                                <td><button class="btn btn-outline-dark rounded-3 btn-sm" onclick="removeItem('expense', {{ expense.id }})" type="button">Usuń</button></td> 
                                             </tr>
                                             {% endfor %}
                                     {% else %}
@@ -215,93 +230,28 @@
                         <div id='myDiv' class=" p-0 pt-2"></div>
                     </div>
                 </div>
-
-                {% else %}
-                
-                <h1 class="background mb-0 fs-2 mb-2 pb-2">Bilans z bieżacego miesiąca!</h1>
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="col-lg-12 m-0">
-                            <h3 class="text-center">Przychody</h3>
-                            <table class="table table-success table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th colspan="2">Komentarz</th> <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% if incomes %}
-                                        {% set sumincomes = 0 %}    
-                                        {% for income in incomes %}
-                                            {% set sumincomes = sumincomes + income.amount %}
-                                            <tr>    
-                                                <td>{{ loop.index }}</td>
-                                                <td>{{ income.name }}</td>
-                                                <td>{{ income.amount }} zł</td>
-                                                
-                                                <td>{{ income.date_of_income }}</td>
-                                                <td colspan="2">{{income.income_comment}}</td> <td></td>
-                                            </tr>
-                                            {% endfor %}
-                                    {% else %}
-                                        <tr>
-                                            <td colspan="7">Brak przychodów!</td>
-                                        </tr>
-                                    {% endif %}
-                                </tbody>
-                                </table>
-                        </div>
-                        <div class="col-lg-12 m-0">
-                            <h3 class="text-center">Wydatki</h3>
-                            <table class="table table-warning table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Nr.</th><th>Kategoria</th><th>Kwota</th><th>Data</th><th>Rodzaj płatności</th><th colspan="2">Komentarz</th> <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% if expenses %} 
-                                        {% set sumexpenses = 0 %}
-                                        {% for expense in expenses %}
-                                            {% set sumexpenses = sumexpenses + expense.amount %}
-                                            <tr>    
-                                                <td>{{ loop.index }}</td>
-                                                <td>{{ expense.name }}</td>
-                                                <td>{{ expense.amount }} zł</td>
-                                                <td>{{ expense.date_of_expense }}</td>
-                                                <td>{{ expense.payname }}</td>
-                                                <td colspan="2">{{expense.expense_comment}}</td> <td></td>
-                                            </tr>
-                                            {% endfor %}
-                                    {% else %}
-                                        <tr>
-                                            <td colspan="8">Brak wydatków!</td>
-                                        </tr>
-                                    {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <div class="background col-lg-4 m-0 text-center">
-                        <h3 class="py-2" style="border-bottom: solid;" >Zestawienie bilansu</h3>
-                        {% set sumbilans = sumincomes - sumexpenses %}
-                        <h4>{{ sumbilans }} zł</h4>
-                        {% if sumbilans > 0 %}
-                            <h5>Brawo Twój bilans jest dodatni!</h5>
-                            {% elseif sumbilans < 0 %}
-                                <h5>Niestety Twój bilans jest ujemny!</h5>
-                            {% else %}
-                                <h5>Twój bilans jest zerowy</h5> 
-                        {% endif %}                          
-                        <div id='myDiv' class="p-0 pt-2"></div>
-                    </div>
-                </div>
             {% endif %}
         </div>
     </div>
+
 </section>
+
+<div class="modal fade modal-sm" id="remove-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="remove-modal" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdrop">Usuwanie!</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Czy jesteś pewien, aby usunąć dany wiersz?
+            </div>
+            <div class="modal-footer">    
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Wróć</button>
+                <button type="button" class="btn btn-outline-dark" id="remove-btn" >Usuń</button>
+            </div>
+        </div>
+        </div>
+</div>
+
 {% endblock %}
-
-
-

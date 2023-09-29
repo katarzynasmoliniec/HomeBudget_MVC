@@ -21,3 +21,4 @@ rangeChooser.addEventListener("change", function() {
         endDateLabel.classList.add('hidden');
     }
 });
+
