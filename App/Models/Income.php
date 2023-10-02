@@ -85,6 +85,21 @@ class Income extends \Core\Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public static function findInomeCategoryId($user_id, $category)
+    {
+        $sql = 'SELECT id FROM incomes_category_assigned_to_users
+                WHERE user_id = :user_id AND name = :name LIMIT 1';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':name', $category, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $fetchArray = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $fetchArray['id'];
+    }
+
     public static function removeIncome($user_id, $id)
     {
         $response = ["message_type" => "", "message" => ""];
@@ -98,8 +113,9 @@ class Income extends \Core\Model
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
         $stmt->execute();
+        
         $response["message_type"] = "success";
-        $response["message"] = "Zmiany zachowane!";
+        $response["message"] = "Kategoria usunięta.";
 
         return $response;
     }

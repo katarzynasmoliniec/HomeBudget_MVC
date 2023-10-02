@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block title %}Kategorie{% endblock %}
+
+{% block footer %}
+<script src="/js/settings.js"></script>
+{% endblock %}
+
+{% block body %}
+<section style="margin-bottom: 25px;">
+	<div class="col-md-10 mx-auto my-3  col-lg-12 text-body-secondary">
+		<div class="p-md-3 border rounded-3 bg-body-tertiary">
+			<h1 class="background mb-0 fs-2 mb-2 pb-2">Zmień swoje kategorie!</h1>
+		</div>
+	</div>
+		<div class="row">
+			<div class="col-lg-4 text-body-secondary mb-2 pb-4">
+				<div class="p-3 p-md-2 border rounded-3 bg-body-tertiary">
+					<h3 class="text-center py-2">Przychody</h3>
+					<table class="table table-success table-striped table-sm">
+						<thead>
+							<tr>
+								<th>Nr.</th><th >Kategoria</th><th colspan="2"><button class="btn btn btn btn-outline-primary modal-btn btn-sm" data-bs-toggle="modal" data-bs-target="#add-edit-modal" onclick="prepareForm('add', 'income', 0)" type="button">+ Dodaj kategorię</button></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for income_category in income_categories %}
+							<tr>    
+								<td>{{ loop.index }}</td>
+								<td >{{ income_category.name }}</td>
+								<td><button class="btn btn btn-outline-dark rounded-3 btn-sm" onclick="checkRemoveCategory('income', {{ income_category.id }})" type="button">Usuń</button></td>
+								<td><button class="btn btn btn btn-outline-primary modal-btn btn-sm" data-bs-toggle="modal" data-bs-target="#add-edit-modal" onclick="prepareForm('edit', 'income', {{ income_category.id }})" type="button">Edytuj</button></td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-lg-4 text-body-secondary mb-2 pb-4">
+				<div class="p-3 p-md-2 border rounded-3 bg-body-tertiary">
+					<h3 class="text-center py-2">Wydatki</h3>
+					<table class="table table-success table-striped table-sm">
+						<thead>
+							<tr>
+								<th>Nr.</th><th >Kategoria</th><th colspan="2"><button class="btn btn btn-outline-primary modal-btn btn-sm" data-bs-toggle="modal" data-bs-target="#add-edit-modal" onclick="prepareForm('add', 'expense', 0)" type="button">+ Dodaj kategorię</button></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for expense_category in expense_categories %}
+							<tr>    
+								<td>{{ loop.index }}</td>
+								<td>{{ expense_category.name }}</td>
+								<td><button class="btn btn-outline-dark rounded-3 btn-sm" onclick="checkRemoveCategory('expense', {{ expense_category.id }})" type="button">Usuń</button></td>
+								<td><button class="btn btn btn-outline-primary modal-btn btn-sm" data-bs-toggle="modal" data-bs-target="#add-edit-modal" onclick="prepareForm('edit', 'expense, {{ expense_category.id }})" type="button">Edytuj</button></td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-lg-4 text-body-secondary mb-2 pb-4">
+				<div class="p-3 p-md-2 border rounded-3 bg-body-tertiary">
+					<h3 class="text-center py-2">Rodzaj płatności</h3>
+					<table class="table table-success table-striped table-sm">
+						<thead>
+							<tr>
+								<th>Nr.</th><th>Kategoria</th><th colspan="2"><button class="btn btn btn-outline-primary modal-btn btn-sm" data-bs-toggle="modal" data-bs-target="#add-edit-modal" onclick="prepareForm('add', 'payment', 0)" type="button">+ Dodaj kategorię</button></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for payment_category in payment_categories %}
+							<tr>    
+								<td>{{ loop.index }}</td>
+								<td>{{ payment_category.name }}</td>
+								<td><button class="btn btn-outline-dark rounded-3 btn-sm" onclick="checkRemoveCategory('payment', {{ payment_category.id }})" type="button">Usuń</button></td>
+								<td><button class="btn btn btn-outline-primary modal-btn btn-sm" data-bs-toggle="modal" data-bs-target="#add-edit-modal" onclick="prepareForm('edit', 'payment', {{ payment_category.id }})" type="button">Edytuj</button></td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+</section>
+
+<div class="modal fade" id="add-edit-modal" tabindex="-1" aria-labelledby="add-edit-modal" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="add-edit-title"></h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form id="add-edit-form">
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label" id="add-edit-label" for="new-category-name"></label>
+						<input class="form-control" id="new-category-name" type="text" name="new-category-name" required>
+					</div>
+					<div id="add-edit-message" class="form-text error"></div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Wróć</button>
+						<button type="submit" class="btn btn-dark" id="submit-form-btn"></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="remove-entries-modal" tabindex="-1" aria-labelledby="remove-entries-modal" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Usuwanie kategorii</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p> Kategoria posiada wartości.</p>
+				<p> Czy napewno chcesz usunąć daną kategorią i wszystkie wartości, które się w niej znajdują?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Wróć</button>
+				<button type="button" class="btn btn-dark" id="remove-category-btn">Zatwierdź</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="confirmation-modal" tabindex="-1" aria-labelledby="confirmation-modal" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="confirmation-title"></h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" id="confirmation-body"></div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Wróć</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -6,6 +6,7 @@ use \Core\View;
 use \App\Models\Income;
 use App\Models\Expense;
 use App\DateValidator;
+use App\Flash;
 
 class Bilans extends Authenticated
 {   
@@ -23,8 +24,7 @@ class Bilans extends Authenticated
     public function showAction()
     {  
         View::renderTemplate('Bilans/show.html', [
-            'user_id' => $this->user_id,
-            'active' => 'balance'
+            'user_id' => $this->user_id
         ]);
     }
 
@@ -46,7 +46,6 @@ class Bilans extends Authenticated
 
         if (empty($dateRange)) {
             $this->redirect('/bilans/show');
-
             exit;
         }
 
@@ -75,7 +74,6 @@ class Bilans extends Authenticated
     {
         $user_id = $_SESSION['user_id'];
         $id = $this->route_params['id'];
-
         echo json_encode(Income::removeIncome($user_id, $id), JSON_UNESCAPED_UNICODE);
     }
 
@@ -83,7 +81,7 @@ class Bilans extends Authenticated
     {
         $user_id = $_SESSION['user_id'];
         $id = $this->route_params['id'];
-
+        Expense::removeExpense($user_id, $id);
         echo json_encode(Expense::removeExpense($user_id, $id), JSON_UNESCAPED_UNICODE);
     }
 

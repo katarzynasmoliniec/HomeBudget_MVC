@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use PDO;
-use App\Flash;
 
 class Expense extends \Core\Model
 {
@@ -108,8 +107,9 @@ class Expense extends \Core\Model
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
         $stmt->execute();
+
         $response["message_type"] = "success";
-        $response["message"] = "Zmiany zachowane!";
+        $response["message"] = "Kategoria usunięta.";
 
         return $response;
     }

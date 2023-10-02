@@ -51,13 +51,13 @@ class Expenses extends Authenticated
     public function editAction()
     {
         View::renderTemplate('Expenses/edit.html', [
-            'expense' => $this->income
+            'expense' => $this->expense
         ]);
     }
 
     public function updateAction()
     {
-        if ($this->income->updateIncomes($_POST)) {
+        if ($this->expense->updateExpense($_POST)) {
 
             Flash::addMessage('Zmiany zachowane!');
 
@@ -66,7 +66,7 @@ class Expenses extends Authenticated
         } else {
 
             View::renderTemplate('Expenses/new.html', [
-                'expense' => $this->income
+                'expense' => $this->expense
             ]);
 
         }

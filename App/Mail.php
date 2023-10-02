@@ -22,7 +22,7 @@ class Mail
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $mail->Port = 465;
 
-            $mail->setFrom(Config::PHPMAILER_SETFROM);
+            $mail->setFrom(Config::PHPMAILER_SETFROM, 'Home Piggy Bank');
             $mail->addAddress($to);
             $mail->Subject = $subject;
             $mail->Body = $html;
@@ -32,7 +32,7 @@ class Mail
         } 
         catch (Exception $e) 
         {
-             echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+             echo "Wiadomośc nie może być wysłana: {$mail->ErrorInfo}";
         }
     }
 }
