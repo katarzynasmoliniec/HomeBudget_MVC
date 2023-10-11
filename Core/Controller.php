@@ -69,7 +69,7 @@ use \App\Flash;
     public function redirect($url)
     {
 
-        header('Location: https://' . $_SERVER['HTTP_HOST'] . $url, true, 303);
+        header('Location: http://' . $_SERVER['HTTP_HOST'] . $url, true, 303);
         exit;
     }
 

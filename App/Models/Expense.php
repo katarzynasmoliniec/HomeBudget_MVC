@@ -29,7 +29,7 @@ class Expense extends \Core\Model
             $stmt = $db->prepare($sql);
 
             $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-            $stmt->bindValue(':expense_category_assigned_to_user_id', $this->category_id, PDO::PARAM_INT);
+            $stmt->bindValue(':expense_category_assigned_to_user_id', $this->category, PDO::PARAM_INT);
             $stmt->bindValue(':payment_method_assigned_to_user_id', $this->pay, PDO::PARAM_INT);
             $stmt->bindValue(':amount', (float) $this->amount, PDO::PARAM_STR);
             $stmt->bindValue(':date_of_expense', $this->date, PDO::PARAM_STR);

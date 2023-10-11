@@ -103,6 +103,10 @@ ul.sidenav li a:hover:not(.active) {
     border-radius: 10px;
 }
 
+.limit {
+    font-size: 10px;
+}
+
 @media screen and (max-width: 1080px) {
     ul.sidenav li.right, 
     ul.sidenav li {float: none;};
@@ -129,4 +133,22 @@ ul.sidenav li a:hover:not(.active) {
 ::-ms-reveal,
 ::-ms-clear {
   display: none !important;
+}
+
+.btn-group {
+    justify-content: left;
+    display: flex;
+}
+
+.modal-btn {
+    display: block;
+    margin-left: 1.75rem;
+}
+
+.settings-checkbox {
+    display: inline-block;
+}
+
+#first-form-element {
+    display: flex;
 }

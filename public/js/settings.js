@@ -1,24 +1,22 @@
-    const addEditModal = document.querySelector('#add-edit-modal');
-    const addEditTitle = document.querySelector('#add-edit-title');
-    const addEditForm = document.querySelector('#add-edit-form');
-    const newCategoryName = document.querySelector('#new-category-name');
-    const addEditLabel = document.querySelector('#add-edit-label');
-    const firstformElement = document.querySelector('#first-form-element');
-    const secondformElement = document.querySelector('#second-form-element');
-    const addEditMessage = document.querySelector('#add-edit-message');
-    const submitFormBtn = document.querySelector('#submit-form-btn');
-    
-    const removeEntriesModal = new bootstrap.Modal(document.querySelector('#remove-entries-modal'));
-    const removeCategoryBtn = document.querySelector('#remove-category-btn');
-    
-    const confirmationModal = new bootstrap.Modal(document.querySelector('#confirmation-modal'));
-    const confirmationTitle = document.querySelector('#confirmation-title');
-    const confirmationBody = document.querySelector('#confirmation-body');
+const addEditModal = document.querySelector('#add-edit-modal');
+const addEditTitle = document.querySelector('#add-edit-title');
+const addEditForm = document.querySelector('#add-edit-form');
+const newCategoryName = document.querySelector('#new-category-name');
+const addEditLabel = document.querySelector('#add-edit-label');
+const firstformElement = document.querySelector('#first-form-element');
+const secondformElement = document.querySelector('#second-form-element');
+const addEditMessage = document.querySelector('#add-edit-message');
+const submitFormBtn = document.querySelector('#submit-form-btn');
+
+const removeEntriesModal = new bootstrap.Modal(document.querySelector('#remove-entries-modal'));
+const removeCategoryBtn = document.querySelector('#remove-category-btn');
+
+const confirmationModal = new bootstrap.Modal(document.querySelector('#confirmation-modal'));
+const confirmationTitle = document.querySelector('#confirmation-title');
+const confirmationBody = document.querySelector('#confirmation-body');
     
     // Functions
     const prepareForm = (action, category, id) => {
-        
-        const capitalizedAction = action.charAt(0).toUpperCase() + action.slice(1);
     
         addEditModal.setAttribute('data-action', action);
         addEditModal.setAttribute('data-category', category);
@@ -35,6 +33,8 @@
                 addEditLabel.innerText = `Edytuj nazwę kategorii:`;
             }
         submitFormBtn.innerText = `Zatwierdź`;
+
+        console.log(category);
     
         if (category == 'expense') {
             // here I should await limit
@@ -42,6 +42,52 @@
         }
     }
     
+    const appendExpenseElements = () => {
+        
+        const formcheck = document.createElement('div');
+        const checkBoxInput = document.createElement('input');
+        const checkBoxLabel = document.createElement('label');
+
+        const input = document.createElement('input');
+
+        formcheck.setAttribute('class', 'form-check settings-checkbox additional');
+
+        checkBoxInput.setAttribute('class', 'form-check-input');
+        checkBoxInput.setAttribute('id', 'modal-checkbox');
+        checkBoxInput.setAttribute('value', '');
+        checkBoxInput.setAttribute('type', 'checkbox');
+        checkBoxInput.setAttribute('onclick', 'activateLimitField(this)');
+
+        checkBoxLabel.setAttribute('class', 'form-check-label');
+        checkBoxLabel.setAttribute('for', 'modal-checkbox');
+        checkBoxLabel.innerText = 'Aktywuj limit';
+
+        input.setAttribute('class', 'form-control additional');
+        input.setAttribute('id', 'category-limit');
+        input.setAttribute('type', 'number');
+        input.setAttribute('name', 'category-limit');
+        input.setAttribute('min', '0');
+        input.setAttribute('step', '0.01');
+        input.disabled = true;
+
+        firstformElement.appendChild(formcheck);
+        secondformElement.appendChild(input);
+
+        formcheck.appendChild(checkBoxInput);
+        formcheck.appendChild(checkBoxLabel);
+
+        //newCategoryName.removeAttribute("required");
+    }
+
+    const activateLimitField = function (element) {
+        const limit = document.querySelector('#category-limit');
+        if (element.checked) {
+            limit.disabled = false;
+        } else {
+            limit.disabled = true;
+        }
+    }
+
     const handleFormSubmit = async function (e) {
         const action = addEditModal.getAttribute('data-action');
         const category = addEditModal.getAttribute('data-category');
@@ -52,11 +98,12 @@
         let formData = new FormData(this);
     
         try {
+
             const res = await fetch(`../settings/${action}-${category}-category${id ? '/' + id : ''}`, {
                 method: 'POST',
                 body: formData
             });
-        
+    
             if (res.ok) {
                 const data = await res.json();
     
@@ -119,7 +166,7 @@
             element.remove();
         });
     
-        newCategoryName.required = true;
+        //newCategoryName.required = true;
     }
     
     const showConfirmation = () => {

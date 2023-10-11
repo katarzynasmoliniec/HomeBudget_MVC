@@ -45,8 +45,9 @@ class Settings extends Authenticated
     {
         $userId = $this->user->id;
         $expenseCategory = $_POST['new-category-name'];
+        $categoryLimit = $_POST['category-limit'] ?? "";
 
-        echo json_encode(Category::addExpenseCategory($userId, $expenseCategory), JSON_UNESCAPED_UNICODE);
+        echo json_encode(Category::addExpenseCategory($userId, $expenseCategory, $categoryLimit), JSON_UNESCAPED_UNICODE);
     }
 
     public function addPaymentCategoryAction()
@@ -61,9 +62,9 @@ class Settings extends Authenticated
     {
         $userId = $this->user->id;
         $categoryId = $this->route_params['id'];
-        $newCategoryName = $_POST['new-category-name'];
+        $incomeCategory = $_POST['new-category-name'];
 
-        echo json_encode(Category::editIncomeCategory($userId, $categoryId, $newCategoryName), JSON_UNESCAPED_UNICODE);
+        echo json_encode(Category::editIncomeCategory($userId, $categoryId, $incomeCategory), JSON_UNESCAPED_UNICODE);
     }
 
     public function editExpenseCategoryAction()
@@ -71,8 +72,9 @@ class Settings extends Authenticated
         $userId = $this->user->id;
         $categoryId = $this->route_params['id'];
         $newCategoryName = $_POST['new-category-name'];
+        $categoryLimit = $_POST['category-limit'];
 
-        echo json_encode(Category::editExpenseCategory($userId, $categoryId, $newCategoryName), JSON_UNESCAPED_UNICODE);
+        echo json_encode(Category::editExpenseCategory($userId, $categoryId, $newCategoryName, $categoryLimit), JSON_UNESCAPED_UNICODE);
     }
 
     public function editPaymentCategoryAction()

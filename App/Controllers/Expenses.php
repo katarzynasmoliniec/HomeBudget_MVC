@@ -14,16 +14,22 @@ class Expenses extends Authenticated
     {
         parent::before();
         $user_id = $_SESSION['user_id'];
-        $this-> categs = Category::getNameCategoryExpense($user_id);
+        $this-> categories = Category::getNameCategoryExpense($user_id);
         $this-> payforms = Payform::getNamePayform($user_id);
+    }
+
+    protected function after()
+    {
+        unset($_SESSION['s_expense']);
+        unset($_SESSION['e_expense']);
+        unset($_SESSION['e_expense_comment']);
     }
     
     
     public function newAction()
     {
-
         View::renderTemplate('Expenses/new.html', [
-            'categs' => $this->categs,
+            'categories' => $this->categories,
             'payforms' => $this ->payforms
         ]);
     }
@@ -36,39 +42,36 @@ class Expenses extends Authenticated
 
             Flash::addMessage('Wydatek dodany!');
             View::renderTemplate('Expenses/new.html', [
-                'categs' => $this->categs,
+                'categories' => $this->categories,
                 'payforms' => $this ->payforms
             ]);
 
         } else {
             View::renderTemplate('Expenses/new.html', [
-                'categs' => $this->categs,
+                'categories' => $this->categories,
                 'payforms' => $this ->payforms
             ]);
         }
     }
 
-    public function editAction()
+    public function limitAction()
     {
-        View::renderTemplate('Expenses/edit.html', [
-            'expense' => $this->expense
-        ]);
+        $user_id = $_SESSION['user_id'];
+        $category = $this->route_params['category'];
+
+        echo json_encode(Category::expenseGetLimit($user_id, $category), JSON_UNESCAPED_UNICODE);
     }
 
-    public function updateAction()
+    public function expenseMonthSumAction()
     {
-        if ($this->expense->updateExpense($_POST)) {
+        $user_id = $_SESSION['user_id'];
+        $category = $this->route_params['category'];
+        $date = $this->route_params['date'];
 
-            Flash::addMessage('Zmiany zachowane!');
+        $categoryId = Category::getCategoryId($user_id, $category);
 
-            $this->redirect('/expenses/new');
-
-        } else {
-
-            View::renderTemplate('Expenses/new.html', [
-                'expense' => $this->expense
-            ]);
-
-        }
+        echo json_encode(Category::getMonthlyCategoryExpense($user_id, $categoryId, $date), JSON_UNESCAPED_UNICODE);
     }
+
+    
 }
