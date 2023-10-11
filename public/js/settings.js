@@ -16,10 +16,14 @@ const confirmationTitle = document.querySelector('#confirmation-title');
 const confirmationBody = document.querySelector('#confirmation-body');
     
     // Functions
-    const prepareForm = (action, category, id) => {
+    const prepareForm = (action, category, id, name) => {
     
         addEditModal.setAttribute('data-action', action);
         addEditModal.setAttribute('data-category', category);
+
+        if (newCategoryName !== '') {
+            newCategoryName.value = name;
+        }
     
         if (id !== 0) {
             addEditModal.setAttribute('data-id', id);
@@ -34,8 +38,6 @@ const confirmationBody = document.querySelector('#confirmation-body');
             }
         submitFormBtn.innerText = `Zatwierdź`;
 
-        console.log(category);
-    
         if (category == 'expense') {
             // here I should await limit
             appendExpenseElements();
@@ -98,7 +100,7 @@ const confirmationBody = document.querySelector('#confirmation-body');
         let formData = new FormData(this);
     
         try {
-
+            console.log(category);
             const res = await fetch(`../settings/${action}-${category}-category${id ? '/' + id : ''}`, {
                 method: 'POST',
                 body: formData
