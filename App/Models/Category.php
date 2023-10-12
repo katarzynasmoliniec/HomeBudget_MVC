@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use PDO;
+use App\DateValidator;
 
 class Category extends \Core\Model
 {
@@ -356,15 +357,15 @@ class Category extends \Core\Model
         $stmt->execute();
     }
 
-    public static function expenseGetLimit($user_id, $category) {
+    public static function expenseGetLimit($user_id, $id) {
         $sql = 'SELECT is_limit_active, cash_limit  FROM `expenses_category_assigned_to_users`
-                WHERE `user_id` = :user_id AND `name` = :name
+                WHERE `user_id` = :user_id AND `id` = :id
                 LIMIT 1';
 
         $db = static::getDB();
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->bindParam(':name', $category, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
 
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);

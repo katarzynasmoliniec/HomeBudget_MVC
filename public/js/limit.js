@@ -12,17 +12,11 @@ const renderInfoBox = limitInfoData => {
     const limit = limitInfoData.cash_limit;
     const isLimitActive = limitInfoData.is_limit_active;
 
-    if (!!limit && isLimitActive) {
-        limitInfo.innerText = `Ustaliłeś limit ${limit.toFixed(2)} PLN dla danej kategorii.`;
-    }
-
-    if (limit > 0 && !isLimitActive) {
-        limitInfo.innerText = 'Limit został ustalony lecz nie jest aktywny.';
-    }
-
-    if (limit === 0) {
+    if (limit > 0) {
+        limitInfo.innerText = `Ustaliłeś limit ${limit} PLN dla danej kategorii.`;
+    } else {
         limitInfo.innerText = 'Limit nie został ustalony.';
-    }
+    }   
 }
 
 const renderValueBox = monthlyExpenses => {
@@ -32,17 +26,18 @@ const renderValueBox = monthlyExpenses => {
 const renderLeftBox = (limitInfoData, monthlyExpenses, amount) => {
     const limit = limitInfoData.cash_limit;
     const isLimitActive = limitInfoData.is_limit_active;
+    
 
     if (isLimitActive) {
-        limitLeft.innerText = `Limit: ${(limit - monthlyExpenses - amount).toFixed(2)} PLN.`;
+        limitLeft.innerText = `Limit: ${(limit - monthlyExpenses - amount)} PLN.`;
 
-        (limit - monthlyExpenses - amount).toFixed(2) < 0 ? limitLeft.classList.add('above-limit') : limitLeft.classList.remove('above-limit');
+        (limit - monthlyExpenses - amount) < 0 ? limitLeft.classList.add('above-limit') : limitLeft.classList.remove('above-limit');
     }
 }
 
 const limitLeftClear = () => {
     limitLeft.classList.remove('above-limit');
-    limitLeft.innerText = 'Limit musi być aktywny i kwota wydatku nie może być pusta.';
+    limitLeft.innerText = 'Limit nie został ustalony lub nie wpisano kwoty wydatku.';
 }
 
 // Async fetch funtcions
@@ -94,7 +89,7 @@ const eventsAction = async (category, date, amount) => {
 
 // Event listeners
 categoryField.addEventListener('change', async () => {
-    const category = categoryField.options.value;
+    const category = categoryField.options[categoryField.selectedIndex].value;
     const date = dateField.value;
     const amount = amountField.value;
 
@@ -110,7 +105,7 @@ dateField.addEventListener('change', async () => {
 })
 
 amountField.addEventListener('input', async () => {
-    const category = categoryField.options.value;
+    const category = categoryField.options[categoryField.selectedIndex].value;
     const date = dateField.value;
     const amount = amountField.value;
 

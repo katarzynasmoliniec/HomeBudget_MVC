@@ -57,18 +57,16 @@ class Expenses extends Authenticated
     public function limitAction()
     {
         $user_id = $_SESSION['user_id'];
-        $category = $this->route_params['category'];
+        $categoryId = $this->route_params['category'];
 
-        echo json_encode(Category::expenseGetLimit($user_id, $category), JSON_UNESCAPED_UNICODE);
+        echo json_encode(Category::expenseGetLimit($user_id, $categoryId), JSON_UNESCAPED_UNICODE);
     }
 
     public function expenseMonthSumAction()
     {
         $user_id = $_SESSION['user_id'];
-        $category = $this->route_params['category'];
+        $categoryId = $this->route_params['category'];
         $date = $this->route_params['date'];
-
-        $categoryId = Category::getCategoryId($user_id, $category);
 
         echo json_encode(Category::getMonthlyCategoryExpense($user_id, $categoryId, $date), JSON_UNESCAPED_UNICODE);
     }

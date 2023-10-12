@@ -51,8 +51,9 @@ function plotIncomesChart() {
         Plotly.newPlot('myDiv', data, layout, {displaylogo: false});
     {% endif %}
 }
-Plotly.Plot(plotIncomesChart()); 
+plotIncomesChart(); 
 </script>
+
 <script src='https://cdn.plot.ly/plotly-2.26.0.min.js'></script>
 <script>
 function plotExpensesChart() {
@@ -100,7 +101,8 @@ var layout = {
 {% endif %}
 
 }
-Plotly.Plot(plotExpensesChart());
+
+plotExpensesChart();
 </script>
 
 <script src="/js/customDate.js"></script>
