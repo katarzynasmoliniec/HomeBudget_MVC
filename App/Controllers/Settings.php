@@ -72,7 +72,7 @@ class Settings extends Authenticated
         $userId = $this->user->id;
         $categoryId = $this->route_params['id'];
         $newCategoryName = $_POST['new-category-name'];
-        $categoryLimit = $_POST['category-limit'];
+        $categoryLimit = $_POST['category-limit'] ?? "";
 
         echo json_encode(Category::editExpenseCategory($userId, $categoryId, $newCategoryName, $categoryLimit), JSON_UNESCAPED_UNICODE);
     }

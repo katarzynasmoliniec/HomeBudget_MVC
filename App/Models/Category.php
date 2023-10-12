@@ -99,17 +99,18 @@ class Category extends \Core\Model
         return true;
     }
 
-    private static function checkIfCategoryExpenseExists($userId, $categoryToUpper)
+    private static function checkIfCategoryExpenseExists($userId, $categoryToUpper, $id)
     {
         $sql = 'SELECT name FROM (SELECT UPPER(name) AS name FROM expenses_category_assigned_to_users
-                WHERE user_id = :userId) a WHERE name = :category';
+                WHERE user_id = :userId AND id != :id) a WHERE name = :category';
 
         $db = static::getDB();
 
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
         $stmt->bindParam(':category', $categoryToUpper, PDO::PARAM_STR);
-
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    
         $stmt->execute();
 
         if (!$stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -144,7 +145,7 @@ class Category extends \Core\Model
 
     public static function addExpenseCategory($userId, $expenseCategory, $categoryLimit)
     {
-        $response = static::validateCategoryExpenses($userId, $expenseCategory);
+        $response = static::validateCategoryExpenses($userId, $expenseCategory, 0);
 
         if ($categoryLimit !== "" && $response["message_type"] != "error") {
             $response = static::validateLimit($categoryLimit);
@@ -153,18 +154,25 @@ class Category extends \Core\Model
         $expenseCategory = ucfirst($expenseCategory);
 
         if ($response["message_type"] != "error") {
-            $sql = 'INSERT INTO expenses_category_assigned_to_users (user_id, name, cash_limit)
-                    VALUES (:userId, :name, :cashLimit)';
+            
+            if ($categoryLimit === ""){
+                $is_limit_active = 0;
+            } else {
+                $is_limit_active = 1;
+            }
+            
+            $sql = 'INSERT INTO expenses_category_assigned_to_users (user_id, name, cash_limit, is_limit_active)
+                    VALUES (:userId, :name, :cashLimit, :is_limit_active)';
 
             $db = static::getDB();
             $stmt = $db->prepare($sql);
             $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
             $stmt->bindParam(':name', $expenseCategory, PDO::PARAM_STR);
             $stmt->bindParam(':cashLimit', $categoryLimit, PDO::PARAM_INT);
+            $stmt->bindParam(':is_limit_active', $is_limit_active, PDO::PARAM_INT);
 
             $stmt->execute();
 
-            $response2 = static::setLimit($userId, $expenseCategory, $categoryLimit);
             $response["message_type"] = "success";
             $response["message"] = ["Kategoria została dodana."];
         }
@@ -173,16 +181,9 @@ class Category extends \Core\Model
 
     public static function editExpenseCategory($userId, $categoryId, $newCategoryName, $categoryLimit)
     {
-        if (empty($newCategoryName) && $categoryLimit === "") {
-            $response["message_type"] = "error";
-            $response["message"] = "Both fields cannot be empty!";
-        }
+        $response = static::validateCategoryExpenses($userId, $newCategoryName, $categoryId);
 
-        if (!empty($newCategoryName)) {
-            $response = static::validateCategoryExpenses($userId, $newCategoryName);
-        }
-
-        if (!empty($categoryLimit)) {
+        if ($categoryLimit !== "" && $response["message_type"] != "error") {
             $response = static::validateLimit($categoryLimit);
         }
 
@@ -190,19 +191,22 @@ class Category extends \Core\Model
 
         if ($response["message_type"] != "error") {
 
-            if ($categoryLimit !== "" && empty($newCategoryName)) {
-                $sql = 'UPDATE `expenses_category_assigned_to_users`
-                        SET `cash_limit` = :categoryLimit
-                        WHERE `user_id` = :userId AND `id` = :categoryId
-                        LIMIT 1';
-            } else if (!empty($newCategoryName) && $categoryLimit === "") {
+            if ($categoryLimit === ""){
+                $is_limit_active = 0;
+                $categoryLimit = 0;
+                
+            } else {
+                $is_limit_active = 1;
+            }
+
+            if (!empty($newCategoryName) && $categoryLimit === "") {
                 $sql = 'UPDATE `expenses_category_assigned_to_users`
                         SET `name` = :newCategoryName
                         WHERE `user_id` = :userId AND `id` = :categoryId
                         LIMIT 1';
             } else {
                 $sql = 'UPDATE `expenses_category_assigned_to_users`
-                        SET `name` = :newCategoryName, `cash_limit` = :categoryLimit
+                        SET `name` = :newCategoryName, `cash_limit` = :categoryLimit, `is_limit_active` = :is_limit_active
                         WHERE `user_id` = :userId AND `id` = :categoryId
                         LIMIT 1';
             }
@@ -218,6 +222,7 @@ class Category extends \Core\Model
 
             if ($categoryLimit !== "") {
                 $stmt->bindParam(':categoryLimit', $categoryLimit, PDO::PARAM_INT);
+                $stmt->bindParam(':is_limit_active', $is_limit_active, PDO::PARAM_INT);
             }
 
             $stmt->execute();
@@ -351,28 +356,6 @@ class Category extends \Core\Model
         $stmt->execute();
     }
 
-    private static function setLimit($user_id, $expenseCategory, $categoryLimit)
-    {
-        if ($categoryLimit !== "") {
-            $sql = 'UPDATE `expenses_category_assigned_to_users`
-                SET `is_limit_active` = 1
-                WHERE `user_id` = :user_id AND `name` = :name';
-        } else {
-            $sql = 'UPDATE `expenses_category_assigned_to_users`
-                SET `is_limit_active` = 0
-                WHERE `user_id` = :user_id AND `name` = :name';
-        }
-
-        $db = static::getDB();
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->bindParam(':name', $expenseCategory, PDO::PARAM_INT);
-
-        $stmt->execute();
-
-       return ["message_type" => "success", "message" => "Zmieniono aktywność limitu."];
-    }
-
     public static function expenseGetLimit($user_id, $category) {
         $sql = 'SELECT is_limit_active, cash_limit  FROM `expenses_category_assigned_to_users`
                 WHERE `user_id` = :user_id AND `name` = :name
@@ -414,7 +397,7 @@ class Category extends \Core\Model
         return $result[0]['monthlySum'];
     }
 
-    private static function validateCategoryExpenses($userId, $expenseCategory)
+    private static function validateCategoryExpenses($userId, $expenseCategory, $id)
     {
         $response = ["message_type" => "", "message" => ""];
         $categoryToUpper = strtoupper($expenseCategory);
@@ -427,7 +410,7 @@ class Category extends \Core\Model
             $response["message"] = "Niedozwolone znaki w nazwie.";
         }
 
-        if (static::checkIfCategoryExpenseExists($userId, $categoryToUpper)) {
+        if (static::checkIfCategoryExpenseExists($userId, $categoryToUpper, $id)) {
             $response["message_type"] = "error";
             $response["message"] = "Nazwa tej kategorii jest zajęta.";
         }
@@ -448,7 +431,6 @@ class Category extends \Core\Model
             $response["message_type"] = "error";
             $response["message"] = "Limit nie może być mniejszy niż 0.01 PLN.";
         }
-
         return $response;
     }
 }

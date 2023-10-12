@@ -102,7 +102,7 @@ categoryField.addEventListener('change', async () => {
 })
 
 dateField.addEventListener('change', async () => {
-    const category = categoryField.options.value;
+    const category = categoryField.options[categoryField.selectedIndex].value;
     const date = dateField.value;
     const amount = amountField.value;
 
