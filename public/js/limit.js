@@ -1,46 +1,41 @@
-// Const declarations
-const amountField = document.querySelector('#amount');
-const dateField = document.querySelector('#date');
-const categoryField = document.querySelector('#category');
+const amountArea = document.querySelector('#amount');
+const dateArea = document.querySelector('#date');
+const categoryArea = document.querySelector('#category');
 
-const limitInfo = document.querySelector('#limit-info');
-const limitValue = document.querySelector('#limit-value');
-const limitLeft = document.querySelector('#limit-left');
+const limitCategory = document.querySelector('#limit-category');
+const limitDate = document.querySelector('#limit-date');
+const limitAmount = document.querySelector('#limit-amount');
 
-// Rendering alert boxes
-const renderInfoBox = limitInfoData => {
-    const limit = limitInfoData.cash_limit;
-    const isLimitActive = limitInfoData.is_limit_active;
+const areaCategory = limitData => {
+    const limit = limitData.cash_limit;
 
     if (limit > 0) {
-        limitInfo.innerText = `Ustaliłeś limit ${limit} PLN dla danej kategorii.`;
+        limitCategory.innerText = `Ustaliłeś limit ${limit} PLN dla danej kategorii.`;
     } else {
-        limitInfo.innerText = 'Limit nie został ustalony.';
+        limitCategory.innerText = 'Limit nie został ustalony.';
     }   
 }
 
-const renderValueBox = monthlyExpenses => {
-    limitValue.innerText = !!monthlyExpenses ? `Wydałeś ${monthlyExpenses} PLN w tym miesiącu na daną kategorię.` : `Nie wydałeś jeszcze żadnej kwoty w tej kategorii!`;
+const areaDate = expenseOfMonth => {
+    limitDate.innerText = !!expenseOfMonth ? `Wydałeś ${expenseOfMonth} PLN w tym miesiącu na daną kategorię.` : `Nie wydałeś jeszcze żadnej kwoty w tej kategorii!`;
 }
 
-const renderLeftBox = (limitInfoData, monthlyExpenses, amount) => {
-    const limit = limitInfoData.cash_limit;
-    const isLimitActive = limitInfoData.is_limit_active;
-    
+const areaAmount = (limitData, expenseOfMonth, amount) => {
+    const limit = limitData.cash_limit;
+    const isLimitActive = limitData.is_limit_active;
 
     if (isLimitActive) {
-        limitLeft.innerText = `Limit: ${(limit - monthlyExpenses - amount)} PLN.`;
+        limitAmount.innerText = `Limit: ${(limit - expenseOfMonth - amount)} PLN.`;
 
-        (limit - monthlyExpenses - amount) < 0 ? limitLeft.classList.add('above-limit') : limitLeft.classList.remove('above-limit');
+        (limit - expenseOfMonth - amount) < 0 ? limitAmount.classList.add('above-limit') : limitAmount.classList.remove('above-limit');
     }
 }
 
-const limitLeftClear = () => {
-    limitLeft.classList.remove('above-limit');
-    limitLeft.innerText = 'Limit nie został ustalony lub nie wpisano kwoty wydatku.';
+const limitAmountClear = () => {
+    limitAmount.classList.remove('above-limit');
+    limitAmount.innerText = 'Limit nie został ustalony lub nie wpisano kwoty wydatku.';
 }
 
-// Async fetch funtcions
 const getLimitForCategory = async (category) => {
     try {
         const res = await fetch(`../api/limit/${category}`);
@@ -51,7 +46,7 @@ const getLimitForCategory = async (category) => {
     }
 }
 
-const getMonthlyExpenses = async (category, date) => {
+const getExpenseOfMonth = async (category, date) => {
     try {
         const res = await fetch(`../api/limitSum/${category}/${date}`);
         const data = await res.json();
@@ -61,53 +56,51 @@ const getMonthlyExpenses = async (category, date) => {
     }
 }
 
-// Events logic
-const eventsAction = async (category, date, amount) => {
+const action = async (category, date, amount) => {
     if (!!category) {
-        const limitInfoData = await getLimitForCategory(category);
-        renderInfoBox(limitInfoData);
+        const limitData = await getLimitForCategory(category);
+        areaCategory(limitData);
 
         if (!!date) {
-            const monthlyExpenses = await getMonthlyExpenses(category, date);
-            renderValueBox(monthlyExpenses);
+            const expenseOfMonth = await getExpenseOfMonth(category, date);
+            areaDate(expenseOfMonth);
 
-            if (!!amount && !!limitInfoData) {
-                renderLeftBox(limitInfoData, monthlyExpenses, amount);
+            if (!!amount && !!limitData) {
+                areaAmount(limitData, expenseOfMonth, amount);
             } else {
-                limitLeftClear();
+                limitAmountClear();
             }
         } else {
-            limitValue.innerText = `Wybierz kategorię i datę.`;
-            limitLeftClear();
+            limitDate.innerText = `Wybierz kategorię i datę.`;
+            limitAmountClear();
         }
     } else {
-        limitInfo.innerText = 'Wybierz kategorię.';
-        limitValue.innerText = `Wybierz kategorię i datę.`;
-        limitLeftClear();
+        limitCategory.innerText = 'Wybierz kategorię.';
+        limitDate.innerText = `Wybierz kategorię i datę.`;
+        limitAmountClear();
     }
 }
 
-// Event listeners
-categoryField.addEventListener('change', async () => {
-    const category = categoryField.options[categoryField.selectedIndex].value;
-    const date = dateField.value;
-    const amount = amountField.value;
+categoryArea.addEventListener('change', async () => {
+    const category = categoryArea.options[categoryArea.selectedIndex].value;
+    const date = dateArea.value;
+    const amount = amountArea.value;
 
-    eventsAction(category, date, amount);
+    action(category, date, amount);
 })
 
-dateField.addEventListener('change', async () => {
-    const category = categoryField.options[categoryField.selectedIndex].value;
-    const date = dateField.value;
-    const amount = amountField.value;
+dateArea.addEventListener('change', async () => {
+    const category = categoryArea.options[categoryArea.selectedIndex].value;
+    const date = dateArea.value;
+    const amount = amountArea.value;
 
-    eventsAction(category, date, amount);
+    action(category, date, amount);
 })
 
-amountField.addEventListener('input', async () => {
-    const category = categoryField.options[categoryField.selectedIndex].value;
-    const date = dateField.value;
-    const amount = amountField.value;
+amountArea.addEventListener('input', async () => {
+    const category = categoryArea.options[categoryArea.selectedIndex].value;
+    const date = dateArea.value;
+    const amount = amountArea.value;
 
-    eventsAction(category, date, amount);
+    action(category, date, amount);
 })

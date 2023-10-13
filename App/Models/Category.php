@@ -358,6 +358,7 @@ class Category extends \Core\Model
     }
 
     public static function expenseGetLimit($user_id, $id) {
+        
         $sql = 'SELECT is_limit_active, cash_limit  FROM `expenses_category_assigned_to_users`
                 WHERE `user_id` = :user_id AND `id` = :id
                 LIMIT 1';
@@ -373,10 +374,11 @@ class Category extends \Core\Model
         return $result[0];
     }
 
-    public static function getMonthlyCategoryExpense($user_id, $categoryId, $date)
+    public static function getExpenseOfMonth($user_id, $categoryId, $date)
     {
         $year = substr($date, 0, 4);
         $month = substr($date, 5, 2);
+        
         $firstDay = substr($date, 0, 8) . '01';
         $lastDay = substr($date, 0, 8) . DateValidator::findLastDayOfMonth($month, $year);
 

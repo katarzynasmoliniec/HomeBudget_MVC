@@ -17,7 +17,6 @@ const confirmationBody = document.querySelector('#confirmation-body');
     
 
 const prepareForm = (action, category, id, name) => {
-
     addEditModal.setAttribute('data-action', action);
     addEditModal.setAttribute('data-category', category);
     addEditModal.setAttribute('data-name', name);
@@ -40,13 +39,29 @@ const prepareForm = (action, category, id, name) => {
     submitFormBtn.innerText = `Zatwierdź`;
 
     if (category == 'expense') {
-        getLimit(name);
+        getLimit(id);
     }
 }
 
-const setLimit = async (name) => {
+const getLimit = async (id) => {
+    if (id !== 0) {
+        const limitInfoData = await setLimit(id);
+        const limit= limitInfoData.cash_limit;
+        const isLimitActive = limitInfoData.is_limit_active;
+
+        if (limit === 0 && isLimitActive === 0) {
+            includeBoxExpense();
+        } else {
+            includeBoxExpense(limit, isLimitActive);
+        }
+    } else {
+        includeBoxExpense();
+    }
+}
+
+const setLimit = async (id) => {
     try {
-        const res = await fetch(`../api/limit/${name}`);
+        const res = await fetch(`../api/limit/${id}`);
         const data = await res.json();
         return data;
     } catch (e) {
@@ -54,24 +69,7 @@ const setLimit = async (name) => {
     }
 }
 
-const getLimit = async (name) => {
-
-    if (name !== '') {
-        const limitInfoData = await setLimit(name);
-        const limit= limitInfoData.cash_limit;
-        const isLimitActive = limitInfoData.is_limit_active;
-
-        if (limit === 0 && isLimitActive === 0) {
-            appendExpenseElements();
-        } else {
-            appendExpenseElements(limit, isLimitActive);
-        }
-    } else {
-        appendExpenseElements();
-    }
-}
-
-const appendExpenseElements = (limit, isLimitActive) => {
+const includeBoxExpense = (limit, isLimitActive) => {
 
     const formcheck = document.createElement('div');
     const checkBoxInput = document.createElement('input');
@@ -83,7 +81,7 @@ const appendExpenseElements = (limit, isLimitActive) => {
     checkBoxInput.setAttribute('class', 'form-check-input');
     checkBoxInput.setAttribute('id', 'modal-checkbox');
     checkBoxInput.setAttribute('type', 'checkbox');
-    checkBoxInput.setAttribute('onclick', 'activateLimitField(this)');
+    checkBoxInput.setAttribute('onclick', 'activateLimit(this)');
 
     checkBoxLabel.setAttribute('class', 'form-check-label');
     checkBoxLabel.setAttribute('for', 'modal-checkbox');
@@ -118,13 +116,12 @@ const appendExpenseElements = (limit, isLimitActive) => {
     secondformElement.appendChild(input);
 
     formcheck.appendChild(checkBoxInput);
-    formcheck.appendChild(checkBoxLabel);
-    
+    formcheck.appendChild(checkBoxLabel);  
 }
 
-const activateLimitField = function (element) {
+const activateLimit = function (e) {
     const limit = document.querySelector('#category-limit');
-    if (element.checked) {
+    if (e.checked) {
         limit.disabled = false;
         limit.value = 0;
     } else {
@@ -133,13 +130,12 @@ const activateLimitField = function (element) {
     }
 }
 
-const handleFormSubmit = async function (e) {
+const onclickSubmit = async function (e) {
     const action = addEditModal.getAttribute('data-action');
     const category = addEditModal.getAttribute('data-category');
     const id = addEditModal.getAttribute('data-id');
 
     e.preventDefault();
-
     let formData = new FormData(this);
 
     try {
@@ -236,6 +232,6 @@ const prepareConfirmation = action => {
     }
 }
 
-addEditForm.addEventListener('submit', handleFormSubmit);
+addEditForm.addEventListener('submit', onclickSubmit);
 addEditModal.addEventListener('hidden.bs.modal', clearInput);
 document.addEventListener('DOMContentLoaded', showConfirmation);

@@ -25,7 +25,6 @@ class Expenses extends Authenticated
         unset($_SESSION['e_expense_comment']);
     }
     
-    
     public function newAction()
     {
         View::renderTemplate('Expenses/new.html', [
@@ -68,8 +67,6 @@ class Expenses extends Authenticated
         $categoryId = $this->route_params['category'];
         $date = $this->route_params['date'];
 
-        echo json_encode(Category::getMonthlyCategoryExpense($user_id, $categoryId, $date), JSON_UNESCAPED_UNICODE);
-    }
-
-    
+        echo json_encode(Category::getExpenseOfMonth($user_id, $categoryId, $date), JSON_UNESCAPED_UNICODE);
+    }   
 }
