@@ -22,12 +22,13 @@ const areaDate = expenseOfMonth => {
 
 const areaAmount = (limitData, expenseOfMonth, amount) => {
     const limit = limitData.cash_limit;
-    const isLimitActive = limitData.is_limit_active;
 
-    if (isLimitActive) {
+    if (limit > 0) {
         limitAmount.innerText = `Limit: ${(limit - expenseOfMonth - amount)} PLN.`;
 
         (limit - expenseOfMonth - amount) < 0 ? limitAmount.classList.add('above-limit') : limitAmount.classList.remove('above-limit');
+    } else {
+        limitAmountClear ();
     }
 }
 
@@ -104,3 +105,4 @@ amountArea.addEventListener('input', async () => {
 
     action(category, date, amount);
 })
+
